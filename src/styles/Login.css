@@ -1,0 +1,41 @@
+html,
+body,
+#root {
+  margin: 0px;
+  height: 100%;
+}
+#body {
+  margin: 0px;
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+  flex-wrap: wrap;
+  /* align-items: center;
+  justify-content: flex-start; */
+}
+#nav-bar {
+  flex: 1 1 15%;
+}
+#login-field {
+  flex: 1 1 85%;
+  background-image: url(./images/login-bg.webp);
+  /* background-position: bottom; */
+  background-size: cover;
+  display: flex;
+  align-items: center;
+}
+#input-field {
+  margin-left: 10vw;
+  width: 450px;
+  height: 600px;
+  border-radius: 30px;
+  padding: 20px;
+  font-size: 30px;
+  display: flex;
+  flex-flow: column;
+  background-color: rgba(255, 255, 255, 0.87);
+}
+#input-field {
+  display: flex;
+  flex-flow: column;
+}
