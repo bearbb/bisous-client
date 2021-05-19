@@ -14,10 +14,10 @@ body,
   justify-content: flex-start; */
 }
 #nav-bar {
-  flex: 1 1 15%;
+  flex: 1 1 10%;
 }
 #login-field {
-  flex: 1 1 85%;
+  flex: 1 1 90%;
   background-image: url(./images/login-bg.webp);
   /* background-position: bottom; */
   background-size: cover;
@@ -34,8 +34,87 @@ body,
   display: flex;
   flex-flow: column;
   background-color: rgba(255, 255, 255, 0.87);
+  gap: 20px;
 }
-#input-field {
+#input-field > div {
+  margin: 0 20px 0 20px;
+}
+.credential-input {
   display: flex;
   flex-flow: column;
+  gap: 8px;
 }
+.credential-input > label {
+  font-size: 0.7rem;
+  color: #898989;
+}
+.credential-input > input {
+  border: none;
+  padding-left: 25px;
+  font-size: 1.1rem;
+  font-weight: 450;
+}
+.other-method-sign-in {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.other-method-sign-in > span {
+  padding: 0;
+  box-shadow: none;
+  font-size: 1.3rem;
+  font-weight: 520;
+  color: #fffbfc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.other-method-sign-in > span > span {
+}
+.gg-sign-in {
+  flex: 1 1 65%;
+  background-color: #3f7bf0;
+  background: linear-gradient(to left, #3f7bf0 50%, #1f1f20 50%) right;
+  background-size: 200%;
+  transition: all 0.4s ease-out;
+}
+.fb-sign-in {
+  width: 64px;
+  /* flex: 1 1 25%; */
+  color: #ec4989 !important;
+  background-color: #fbd4fb;
+  background: linear-gradient(to left, #fbd4fb 50%, #1f1f20 50%) right;
+  background-size: 200%;
+  transition: all 0.3s ease-out;
+}
+.fb-sign-in:hover {
+  color: #fffbfc !important;
+}
+.same-height-element-1 {
+  height: 64px;
+  border-radius: 12px;
+}
+#sign-in-button {
+  background-color: #1f1f20;
+  font-size: 1.1rem;
+  color: #fefcfd;
+  font-weight: 500;
+  width: 130px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to left, #1f1f20 50%, #da4b84 50%) right;
+  background-size: 200%;
+  transition: all 0.4s ease-out;
+}
+.input-field-button:hover {
+  cursor: pointer;
+  background-position: left;
+}
+#sign-in-button:hover {
+  background-position: left;
+}
+/* #sign-in-button:hover:after {
+  width: 100%;
+  border-radius: 12px;
+} */
