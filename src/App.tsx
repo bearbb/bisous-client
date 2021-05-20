@@ -1,13 +1,15 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { Login } from "./Login";
+import { Login } from "./pages/Login";
 import { Test } from "./Test";
+import { Signup } from "./pages/Signup";
 
 //import font
 
 function App() {
-  return <Login></Login>;
+  // return <Signup />;
+  return <Login />;
 }
 
 export default App;

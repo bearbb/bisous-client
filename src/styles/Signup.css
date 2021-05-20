@@ -21,7 +21,12 @@ body,
   justify-content: space-between;
   align-items: center;
 }
+#header-field > h1 {
+  /* flex-wrap: nowrap; */
+  flex: 1 1 70%;
+}
 #header-field > a {
+  text-align: right;
   display: flex;
   flex-flow: column;
   align-items: flex-end;
@@ -31,19 +36,18 @@ body,
 #header-field:active {
   text-decoration: none;
 }
-#login-field {
+#sign-up-field {
   flex: 1 1 90%;
-  background-image: url(./images/signup-bg.webp);
+  background-image: url(./images/login-bg.webp);
   /* background-position: bottom; */
   background-size: cover;
-  background-position: 50% 50%;
   display: flex;
   align-items: center;
 }
 #input-field {
   margin-left: 10vw;
   width: 450px;
-  height: 600px;
+  height: 750px;
   border-radius: 30px;
   padding: 20px;
   font-size: 30px;
@@ -82,12 +86,12 @@ body,
   outline: none;
   border: solid rgba(82, 85, 248, 0.87) 2px;
 }
-.other-method-sign-in {
+.other-method-sign-up {
   display: flex;
   justify-content: space-between;
   gap: 12px;
 }
-.other-method-sign-in > span {
+.other-method-sign-up > span {
   padding: 0;
   box-shadow: none;
   font-size: 1.3rem;
@@ -97,16 +101,16 @@ body,
   justify-content: center;
   align-items: center;
 }
-.other-method-sign-in > span > span {
+.other-method-sign-up > span > span {
 }
-.gg-sign-in {
+.gg-sign-up {
   flex: 1 1 65%;
   background-color: #3f7bf0;
   background: linear-gradient(to left, #3f7bf0 50%, #1f1f20 50%) right;
   background-size: 200%;
   transition: all 0.4s ease-out;
 }
-.fb-sign-in {
+.fb-sign-up {
   width: 64px;
   /* flex: 1 1 25%; */
   color: #ec4989 !important;
@@ -115,14 +119,14 @@ body,
   background-size: 200%;
   transition: all 0.3s ease-out;
 }
-.fb-sign-in:hover {
+.fb-sign-up:hover {
   color: #fffbfc !important;
 }
 .same-height-element-1 {
-  height: 64px;
+  height: 60px;
   border-radius: 12px;
 }
-#sign-in-button {
+#sign-up-button {
   background-color: #1f1f20;
   font-size: 1.1rem;
   color: #fefcfd;
@@ -139,7 +143,7 @@ body,
   cursor: pointer;
   background-position: left;
 }
-#sign-in-button:hover {
+#sign-up-button:hover {
   background-position: left;
 }
 /* #sign-in-button:hover:after {

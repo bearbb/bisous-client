@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle, faFacebookF } from "@fortawesome/free-brands-svg-icons";
-import "./styles/Login.css";
+import "../styles/Login.css";
 
 interface LoginProps {}
 
@@ -33,6 +33,11 @@ export const Login: React.FC<LoginProps> = ({}) => {
         <div id="input-field">
           <div id="header-field">
             <h1>Sign in</h1>
+            <a href="">
+              <span>No account?</span>
+              <br />
+              <span>Sign up</span>
+            </a>
           </div>
           <div className="other-method-sign-in">
             <span className="same-height-element-1 gg-sign-in input-field-button">
@@ -51,7 +56,9 @@ export const Login: React.FC<LoginProps> = ({}) => {
             </span>
           </div>
           <div className="credential-input">
-            <label htmlFor="username-input">Username</label>
+            <div className="credential-input-label-container">
+              <label htmlFor="username-input">Username</label>
+            </div>
             <input
               className="same-height-element-1"
               type="text"
@@ -62,7 +69,12 @@ export const Login: React.FC<LoginProps> = ({}) => {
             />
           </div>
           <div className="credential-input">
-            <label htmlFor="password-input">Password</label>
+            <div className="credential-input-label-container forgot-password-container">
+              <label htmlFor="password-input">Password</label>
+              <a href="">
+                <span>Forgot Password?</span>
+              </a>
+            </div>
             <input
               className="same-height-element-1"
               type="password"
