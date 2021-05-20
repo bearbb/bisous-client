@@ -4,12 +4,19 @@ import "./App.css";
 import { Login } from "./pages/Login";
 import { Test } from "./Test";
 import { Signup } from "./pages/Signup";
-
-//import font
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 function App() {
-  // return <Signup />;
-  return <Login />;
+  return (
+    <Router>
+      <div className="App">
+        <Switch>
+          <Route path="/signup" component={Signup}></Route>
+          <Route path="/login" component={Login}></Route>
+        </Switch>
+      </div>
+    </Router>
+  );
 }
 
 export default App;

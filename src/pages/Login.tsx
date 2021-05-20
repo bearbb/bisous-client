@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle, faFacebookF } from "@fortawesome/free-brands-svg-icons";
+import { useHistory } from "react-router-dom";
 import "../styles/Login.css";
 
 interface LoginProps {}
 
 export const Login: React.FC<LoginProps> = ({}) => {
+  const history = useHistory();
   const [userName, setUserName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const passwordInputRef = useRef<HTMLInputElement>(null);
@@ -14,6 +16,9 @@ export const Login: React.FC<LoginProps> = ({}) => {
   };
   const passwordHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value.toString());
+  };
+  const navToSignUp = () => {
+    history.push("/signup");
   };
   const signInHandler = () => {
     //TODO: perform a logic checking on username and password before send to api
@@ -30,10 +35,10 @@ export const Login: React.FC<LoginProps> = ({}) => {
     <div id="body">
       <div id="nav-bar"></div>
       <div id="login-field">
-        <div id="input-field">
+        <div id="login-input-field">
           <div id="header-field">
             <h1>Sign in</h1>
-            <a href="">
+            <a onClick={navToSignUp}>
               <span>No account?</span>
               <br />
               <span>Sign up</span>

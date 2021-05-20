@@ -4,22 +4,22 @@ body,
   margin: 0px;
   height: 100%;
 }
+.App {
+  margin: 0px;
+  height: 100%;
+}
 #body {
   margin: 0px;
   height: 100%;
   display: flex;
   flex-flow: column;
   flex-wrap: wrap;
-  /* align-items: center;
-  justify-content: flex-start; */
 }
-/* #nav-bar {
-  flex: 1 1 10%;
-} */
 #header-field {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  text-align: left;
 }
 #header-field > a {
   display: flex;
@@ -27,6 +27,10 @@ body,
   align-items: flex-end;
   font-size: 1rem;
   text-decoration: none;
+  color: #de7baf;
+}
+#header-field > a:hover {
+  cursor: pointer;
 }
 #header-field:active {
   text-decoration: none;
@@ -40,7 +44,7 @@ body,
   display: flex;
   align-items: center;
 }
-#input-field {
+#login-input-field {
   margin-left: 10vw;
   width: 450px;
   height: 600px;
@@ -52,7 +56,7 @@ body,
   background-color: rgba(255, 255, 255, 0.87);
   gap: 20px;
 }
-#input-field > div {
+#login-input-field > div {
   margin: 0 20px 0 20px;
 }
 .credential-input {
@@ -63,6 +67,8 @@ body,
 .credential-input-label-container {
   font-size: 0.7rem;
   color: #898989;
+  display: flex;
+  justify-content: flex-start;
 }
 .forgot-password-container {
   display: flex;

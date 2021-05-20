@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle, faFacebookF } from "@fortawesome/free-brands-svg-icons";
 import "../styles/Signup.css";
+import { useHistory } from "react-router";
 
 interface SignupProps {}
 
 export const Signup: React.FC<SignupProps> = ({}) => {
+  const history = useHistory();
   const [email, setEmail] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -24,6 +26,9 @@ export const Signup: React.FC<SignupProps> = ({}) => {
   const rePasswordHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRePassword(event.target.value.toString());
   };
+  const navToLogin = () => {
+    history.push("/login");
+  };
   const signUpHandler = () => {
     //clear both password field
     setPassword("");
@@ -38,7 +43,7 @@ export const Signup: React.FC<SignupProps> = ({}) => {
         <div id="input-field">
           <div id="header-field">
             <h1>Sign up</h1>
-            <a href="">
+            <a onClick={navToLogin}>
               <span>Already have an account?</span>
               <br />
               <span>Sign in</span>
