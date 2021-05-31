@@ -1,0 +1,123 @@
+.Feeds {
+  display: flex;
+  flex-flow: column;
+}
+.Feeds > :nth-child(1) {
+  flex: 1 1 15%;
+}
+/* .Feeds > :nth-child(2) */
+.feedsHeader__container {
+  /* position: fixed; */
+  display: flex;
+  justify-content: space-between;
+}
+.feedsHeader__container > :nth-child(1) {
+  flex: 1 1 20%;
+}
+.feedsHeader__container > :nth-child(2) {
+  flex: 1 1 60%;
+}
+.feedsHeader__container > :nth-child(3) {
+  flex: 1 1 20%;
+}
+
+/* Header */
+.Logo {
+  border: 1px solid black;
+}
+.logo__container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  /* justify-content: space-around; */
+  align-items: center;
+  height: 100%;
+  /* padding-left: 20px; */
+}
+
+.SearchNNewPost {
+}
+/* .searchNNewPost__container */
+.searchNNewPost__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  /* padding: auto 30px auto 30px; */
+}
+.search__container {
+  margin-left: 20px;
+  height: 30px;
+  border: 1px solid #acabaa;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+}
+.search__container > :nth-child(1) {
+  margin-left: 20px;
+}
+.search__container > input {
+  outline: none;
+  background-color: #f6f5f4;
+  border-top-style: hidden;
+  border-right-style: hidden;
+  border-left-style: hidden;
+  border-bottom-style: hidden;
+  margin-left: 10px;
+  padding: 2px;
+}
+.search__container > input:focus {
+  outline: none;
+}
+.search__icon {
+  /* font-weight: 300; */
+  color: #acabaa;
+}
+.newPost__container {
+  margin-right: 20px;
+  height: 100%;
+  width: 120px;
+  display: flex;
+  /* justify-content: space-between; */
+  align-items: center;
+}
+.newPost__button {
+  height: 30px;
+  width: 100%;
+  background-color: tomato;
+  color: white;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.Utility {
+}
+.utility__container {
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+/* Body  */
+.feedBody__container {
+  display: flex;
+}
+.feedBody__container > :nth-child(1) {
+  flex: 1 1 20%;
+  border: 1px solid black;
+}
+.feedBody__container > :nth-child(2) {
+  flex: 1 1 60%;
+}
+.feedBody__container > :nth-child(3) {
+  flex: 1 1 20%;
+}
+
+.feedsLeftSideNav__container {
+  display: flex;
+  flex-flow: column;
+  gap: 20px;
+}

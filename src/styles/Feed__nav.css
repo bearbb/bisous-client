@@ -1,0 +1,16 @@
+.Nav {
+}
+
+.nav__container {
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+}
+.nav__element {
+  margin: 10px auto 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav__label {
+}

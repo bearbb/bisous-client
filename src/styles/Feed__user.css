@@ -1,0 +1,33 @@
+.userInformation__container {
+  display: flex;
+  flex-flow: column;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+.avatar {
+  width: 80px;
+}
+.userInformation__description {
+  display: flex;
+  flex-flow: column;
+}
+.userInformation__userName {
+  font-weight: bold;
+}
+.userInformation__name {
+  font-weight: 300;
+}
+.userInformationCount__container {
+  display: flex;
+  justify-content: space-around;
+}
+.userInformationCount__container > div {
+  display: flex;
+  flex-flow: column;
+}
+.userInformationCount__count {
+  font-weight: bold;
+}
+.userInformationCount__description {
+  font-weight: 300;
+}
