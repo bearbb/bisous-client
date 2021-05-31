@@ -1,9 +1,10 @@
 .Posts {
-  border: 1px solid black;
+  /* border-left: 1px solid rgba(47, 47, 47, 0.233);
+  border-right: 1px solid rgba(47, 47, 47, 0.233); */
 }
 .Post {
   margin: 40px 30px 30px 30px;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   border-radius: 20px;
   display: flex;
   flex-flow: column;
@@ -59,13 +60,14 @@
 }
 
 .post__caption {
-  margin-top: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   text-align: left;
   padding-bottom: 5px;
-  border-bottom: 1px solid black;
 }
 
 .post__comment {
+  border-top: 1px solid rgba(47, 47, 47, 0.4);
   display: flex;
   /* justify-content: space-between; */
   align-items: center;

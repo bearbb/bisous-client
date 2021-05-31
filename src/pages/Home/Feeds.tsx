@@ -15,14 +15,25 @@ export const Feeds: React.FC<FeedsProps> = ({}) => {
   return (
     <div className="Feeds">
       <div className="feedsHeader__container">
-        <Logo></Logo>
-        <SearchNNewPost></SearchNNewPost>
-        <Utility></Utility>
+        <div className="headerFlex__container">
+          <Logo></Logo>
+          <SearchNNewPost></SearchNNewPost>
+          <Utility></Utility>
+        </div>
       </div>
       <div className="feedBody__container">
-        <div className="feedsLeftSideNav__container">
-          <User></User>
-          <Nav></Nav>
+        <div className="leftSide__Nav--fixed">
+          <div className="feedsLeftSideNav__container">
+            <User
+              userAvatar={avatar}
+              userName="Bear BB"
+              name="Hieu Nguyen"
+              postCount={30}
+              followerCount={40}
+              followingCount={499}
+            ></User>
+            <Nav></Nav>
+          </div>
         </div>
         <div className="Posts">
           <Post
@@ -40,8 +51,25 @@ export const Feeds: React.FC<FeedsProps> = ({}) => {
             isShared={false}
             isSaved={false}
           ></Post>
+          <Post
+            authorAvatar={avatar}
+            userAvatar={avatar}
+            postId="post01"
+            postImg={postImg}
+            commentCount={20}
+            likeCount={200}
+            shareCount={300}
+            saveCount={20}
+            authorName="Bear BB"
+            caption="This is a caption"
+            isLiked={true}
+            isShared={false}
+            isSaved={false}
+          ></Post>
         </div>
-        <div className="feedRightSideTrending__container"></div>
+        <div className="feedRightSideTrending__container">
+          <h3>Trending</h3>
+        </div>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { faSearch, faPlus } from "@fortawesome/free-solid-svg-icons";
 interface SearchNNewPostProps {}
 
 export const SearchNNewPost: React.FC<SearchNNewPostProps> = ({}) => {
+  const newPostHandler = () => {};
   return (
     <div className="SearchNNewPost">
       <div className="searchNNewPost__container">
@@ -13,7 +14,7 @@ export const SearchNNewPost: React.FC<SearchNNewPostProps> = ({}) => {
           <input type="text" className="search__input" placeholder="Search" />
         </div>
         <div className="newPost__container">
-          <div className="newPost__button">
+          <div className="newPost__button" onClick={newPostHandler}>
             <FontAwesomeIcon icon={faPlus} className="newPost__icon" />
             <span className="newPost__label">New post</span>
           </div>

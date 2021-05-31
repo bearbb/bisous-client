@@ -1,11 +1,16 @@
+.User {
+  margin-top: 30px;
+}
 .userInformation__container {
   display: flex;
   flex-flow: column;
   gap: 15px;
   margin-bottom: 15px;
 }
-.avatar {
+.userInformation__avatar {
   width: 80px;
+  border: 4px solid chocolate;
+  border-radius: 50%;
 }
 .userInformation__description {
   display: flex;
@@ -14,8 +19,13 @@
 .userInformation__userName {
   font-weight: bold;
 }
+.userInformation__userName:hover {
+  cursor: pointer;
+}
 .userInformation__name {
-  font-weight: 300;
+  /* font-weight: 300; */
+  color: rgba(5, 5, 5, 0.6);
+  /* font-weight: lighter; */
 }
 .userInformationCount__container {
   display: flex;

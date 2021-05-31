@@ -11,16 +11,20 @@ const OthersIcon = faBars as IconProp;
 interface UtilityProps {}
 
 export const Utility: React.FC<UtilityProps> = ({}) => {
+  const messageHandler = () => {};
+  const notificationHandler = () => {};
+  const settingHandler = () => {};
+
   return (
     <div className="Utility">
       <div className="utility__container">
-        <span className="utilityIcon__container">
+        <span className="utilityIcon__container" onClick={messageHandler}>
           <FontAwesomeIcon icon={MessageIcon} className="utility__icon" />
         </span>
-        <span className="utilityIcon__container">
+        <span className="utilityIcon__container" onClick={notificationHandler}>
           <FontAwesomeIcon icon={NotificationIcon} className="utility__icon" />
         </span>
-        <span className="utilityIcon__container">
+        <span className="utilityIcon__container" onClick={settingHandler}>
           <FontAwesomeIcon icon={OthersIcon} className="utility__icon" />
         </span>
       </div>
