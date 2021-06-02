@@ -23,9 +23,7 @@
   cursor: pointer;
 }
 .userInformation__name {
-  /* font-weight: 300; */
   color: rgba(5, 5, 5, 0.6);
-  /* font-weight: lighter; */
 }
 .userInformationCount__container {
   display: flex;

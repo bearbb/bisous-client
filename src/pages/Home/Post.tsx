@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../../styles/Feed__post.css";
+import "styles/Feed__post.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHeart,

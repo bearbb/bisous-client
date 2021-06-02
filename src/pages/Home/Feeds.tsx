@@ -1,13 +1,13 @@
 import React from "react";
-import { Logo } from "./Logo";
-import { Nav } from "./Nav";
+import { Logo } from "pages/Header/Logo";
+import { Nav } from "pages/Header/Nav";
 import { Post } from "./Post";
-import { SearchNNewPost } from "./SearchNNewPost";
-import { User } from "./User";
-import { Utility } from "./Utility";
-import "../../styles/Feed.css";
-import avatar from "../../styles/images/avatar.webp";
-import postImg from "../../styles/images/wallpaper.jpg";
+import { SearchNNewPost } from "pages/Header/SearchNNewPost";
+import { User } from "pages/SideNav/User";
+import { Utility } from "pages/Header/Utility";
+import "styles/Feed.css";
+import avatar from "styles/images/avatar.webp";
+import postImg from "styles/images/wallpaper.jpg";
 
 interface FeedsProps {}
 
