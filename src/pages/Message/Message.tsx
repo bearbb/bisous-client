@@ -37,73 +37,73 @@ export const Message: React.FC<MessageProps> = ({}) => {
         friendAvatar: avatar,
       },
       {
-        friendId: "fr02",
-        friendName: "hoa__nt",
+        friendId: "fr03",
+        friendName: "hoa__nt1",
         friendAvatar: avatar,
       },
       {
-        friendId: "fr02",
-        friendName: "hoa__nt",
+        friendId: "fr04",
+        friendName: "hoa__nt2",
         friendAvatar: avatar,
       },
       {
-        friendId: "fr02",
-        friendName: "hoa__nt",
+        friendId: "fr05",
+        friendName: "hoa__nt3",
         friendAvatar: avatar,
       },
       {
-        friendId: "fr02",
-        friendName: "hoa__nt",
+        friendId: "fr06",
+        friendName: "hoa__nt4",
         friendAvatar: avatar,
       },
       {
-        friendId: "fr02",
-        friendName: "hoa__nt",
+        friendId: "fr07",
+        friendName: "hoa__nt5",
         friendAvatar: avatar,
       },
       {
-        friendId: "fr02",
-        friendName: "hoa__nt",
+        friendId: "fr08",
+        friendName: "hoa__nt6",
         friendAvatar: avatar,
       },
       {
-        friendId: "fr02",
-        friendName: "hoa__nt",
+        friendId: "fr09",
+        friendName: "hoa__nt7",
         friendAvatar: avatar,
       },
       {
-        friendId: "fr02",
-        friendName: "hoa__nt",
+        friendId: "fr10",
+        friendName: "hoa__nt8",
         friendAvatar: avatar,
       },
       {
-        friendId: "fr02",
-        friendName: "hoa__nt",
+        friendId: "fr12",
+        friendName: "hoa__nt9",
         friendAvatar: avatar,
       },
       {
-        friendId: "fr02",
-        friendName: "hoa__nt",
+        friendId: "fr13",
+        friendName: "hoa__nt10",
         friendAvatar: avatar,
       },
       {
-        friendId: "fr02",
-        friendName: "hoa__nt",
+        friendId: "fr14",
+        friendName: "hoa__nt11",
         friendAvatar: avatar,
       },
       {
-        friendId: "fr02",
-        friendName: "hoa__nt",
+        friendId: "fr15",
+        friendName: "hoa__nt12",
         friendAvatar: avatar,
       },
       {
-        friendId: "fr02",
-        friendName: "hoa__nt",
+        friendId: "fr16",
+        friendName: "hoa__nt13",
         friendAvatar: avatar,
       },
       {
-        friendId: "fr02",
-        friendName: "hoa__nt",
+        friendId: "fr17",
+        friendName: "hoa__nt14",
         friendAvatar: avatar,
       },
     ],
@@ -235,6 +235,24 @@ export const Message: React.FC<MessageProps> = ({}) => {
   const [currentFriend, setCurrentFriend] = useState<friendData>(
     Data.friendList[0]
   );
+  const currentFriendHandler = (data: any) => {
+    //delete pre active class on pre currentFriend
+    let preDoc = document.getElementsByClassName(currentFriend.friendId)[0];
+    console.log(preDoc);
+    preDoc.classList.remove("currentFriend__container--active");
+    console.log(preDoc);
+    //set current friend on that friend
+    setCurrentFriend(data);
+    //add currentFriend__container--active to that html element
+    let doc = document.getElementsByClassName(data.friendId)[0];
+    doc.classList.add("currentFriend__container--active");
+  };
+  const nullOnclickHandler = () => {
+    console.log(
+      `%cDO NOTHING`,
+      "background: #292d3e; color: #f07178; font-weight: bold"
+    );
+  };
   const [currentUser, setCurrentUser] = useState<string>("bearbb");
   const [currentChatLog, setCurrentChatLog] =
     useState<Array<MessageData>>(MessagesData);
@@ -247,6 +265,9 @@ export const Message: React.FC<MessageProps> = ({}) => {
           friendAvatar={friendData.friendAvatar}
           friendId={friendData.friendId}
           friendName={friendData.friendName}
+          //TODO: add onClick attribute
+          onClickHandler={currentFriendHandler}
+          customClass="friendList--realShit"
         />
       );
     });
@@ -258,6 +279,7 @@ export const Message: React.FC<MessageProps> = ({}) => {
     setNewMessage(event.target.value.toString());
   };
   const newMessageSubmitHandler = () => {
+    //TODO: Scroll to last message when submit a message to server
     console.log(
       `%cClicked`,
       "background: #292d3e; color: #f07178; font-weight: bold"
@@ -301,28 +323,6 @@ export const Message: React.FC<MessageProps> = ({}) => {
         }
       }
     }
-    //   let ChatLog: React.DetailedHTMLProps<
-    //     React.LiHTMLAttributes<HTMLLIElement>,
-    //     HTMLLIElement
-    //   >[] = data.map((messageData) => {
-    //     //check if the sender is this user ??
-    //     if (messageData.sender.username == currentUser) {
-    //       return (
-    //         <li className="outcoming">
-    //           <Chat message={messageData.message} isIncoming={false}></Chat>
-    //         </li>
-    //       );
-    //     } else {
-    //       return (
-    //         <li className="incoming">
-    //           <Chat message={messageData.message} isIncoming={true}></Chat>
-    //         </li>
-    //       );
-    //     }
-    //   });
-    //   let temp = ChatLog[ChatLog.length - 1];
-    //   temp.ref = lastMessageRef;
-    //   ChatLog.splice(-1, 1, temp);
     return <ul className="messageContent__ul">{ChatLogs}</ul>;
   };
   const scrollToLastMessage = () => {
@@ -335,6 +335,11 @@ export const Message: React.FC<MessageProps> = ({}) => {
       setNewMessageIsEmpty(false);
     }
   }, [newMessage]);
+  //Scroll to the very end message when render out msg
+  useEffect(() => {
+    lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
   return (
     <div className="Message">
       <div className="feedsHeader__container">
@@ -365,6 +370,7 @@ export const Message: React.FC<MessageProps> = ({}) => {
                 friendAvatar={currentFriend.friendAvatar}
                 friendId={currentFriend.friendId}
                 friendName={currentFriend.friendName}
+                onClickHandler={nullOnclickHandler}
               />
             )}
           </div>

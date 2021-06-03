@@ -25,31 +25,38 @@ body,
   height: 100%;
 }
 .messageBody__container {
-  padding-top: 60px;
-  height: calc(100vh - 53px);
+  padding-top: 73px;
+  /* padding: 20px; */
+  /* height: calc(100vh - 53px); */
+  height: 100vh;
+  padding-bottom: 20px;
   margin-left: 20%;
   width: 59.7vw;
   display: flex;
 }
 .messageBody__container > :nth-child(1) {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   flex: 1 1 30%;
 }
 .messageBody__container > :nth-child(2) {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   flex: 1 1 70%;
 }
 
 .friendList__container {
   /* height: calc(100vh - 53px); */
   height: auto;
+  border-left: 1px solid rgba(47, 47, 47, 0.233);
+  border-bottom: 1px solid rgba(47, 47, 47, 0.233);
+  border-top: 1px solid rgba(47, 47, 47, 0.233);
 }
 .friendList__userNameContainer {
   height: 60px;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   display: flex;
   justify-content: center;
   align-items: center;
+  border-bottom: 1px solid rgba(47, 47, 47, 0.233);
 }
 .friendList__userName {
   font-weight: bold;
@@ -58,7 +65,7 @@ body,
   height: calc(100% - 60px);
 }
 .friendList__descriptionContainer {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   width: 100%;
   text-align: left;
   height: 40px;
@@ -99,10 +106,19 @@ body,
 
 .message__container {
   height: auto;
+  border: 1px solid rgba(47, 47, 47, 0.233);
 }
 .receiverIn4__container {
   height: 60px;
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid rgba(47, 47, 47, 0.233);
+}
+.receiverIn4__container > div {
+  height: 100%;
+  padding-left: 36px;
+  background-color: #ffffff !important;
+}
+.receiverIn4__container > div > div > span {
+  font-weight: bold;
 }
 
 .receiverIn4__container > div > div > img {
@@ -111,7 +127,7 @@ body,
 
 .newMessage__section {
   height: 84px;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   padding: 20px;
 }
 .newMessage__container {
@@ -188,4 +204,11 @@ body,
   word-break: break-all;
   color: rgba(var(--i1d, 38, 38, 38), 1);
   margin-bottom: 10px;
+}
+
+.currentFriend__container--active {
+  background-color: #efefef;
+}
+.friendList--realShit {
+  cursor: pointer;
 }
