@@ -1,0 +1,168 @@
+/* SinglePost styles */
+.SinglePost {
+  /* display: flex; */
+  width: auto;
+  border: 1px solid rgba(47, 47, 47, 0.233);
+  /* align-items: stretch; */
+}
+.sp__container {
+  height: auto;
+  display: flex;
+  flex-flow: column;
+  position: relative;
+}
+.spDescription__container {
+  right: 0;
+  top: 0;
+  position: absolute;
+  width: 335px;
+  height: 100%;
+}
+/* .SinglePost > div > :nth-child(1) {
+  width: auto;
+}
+.SinglePost > div > :nth-child(2) {
+  width: 100%;
+  border-left: 1px solid rgba(47, 47, 47, 0.233);
+} */
+.spImage__container {
+  /* flex: 1; */
+  display: inline-block;
+  width: auto;
+  margin-right: 335px;
+}
+.sp__img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 48vw;
+  max-height: 90vh;
+}
+
+.spDescription__container {
+}
+.spDescription__1th {
+  border-bottom: 1px solid rgba(47, 47, 47, 0.233);
+  height: calc(100% - 110px);
+  /* overflow-y: auto; */
+}
+.spDecription__2nd {
+  height: auto;
+}
+.sp__avatar {
+  width: 32px;
+}
+.spAuthor__container {
+  display: flex;
+  padding: 16px;
+  align-items: center;
+  border-bottom: 1px solid rgba(47, 47, 47, 0.233);
+}
+.spUsername__container {
+  margin-left: 14px;
+}
+.spAvatar__container {
+  display: flex;
+}
+.sp__username {
+  font-weight: bold;
+}
+
+.spCaption__container > div {
+  padding-top: 0 !important;
+}
+
+.spComment__container {
+  /* overflow-y: auto;
+  scrollbar-width: none; */
+  /* height: auto; */
+  height: calc(100% - 65px);
+}
+.spCommentList__container {
+  padding: 16px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  height: 100%;
+}
+.spCommentList__container > ul {
+  padding: 0;
+  margin: 0;
+}
+
+/* Interaction section */
+
+.spInteraction__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px 8px 16px;
+}
+.spInteraction__container--left > * {
+  padding: 8px;
+}
+.spInteraction__container--left > :nth-child(1) {
+  padding-left: 0 !important;
+}
+.spInteraction__icon {
+  cursor: pointer;
+}
+
+/* Like count section */
+.spDetail__container {
+  padding-left: 16px;
+  text-align: left;
+}
+.spDetail__container > * {
+  font-weight: bold;
+}
+
+/* Add new comment section */
+.spNewComment__container {
+  width: 100%;
+  padding: 16px;
+}
+.spNewComment__inputContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.spNewComment__textarea {
+  width: 100%;
+  resize: none;
+  border: none;
+  height: 22px;
+  font-family: inherit;
+  overflow-y: auto;
+}
+.spNewComment__inputContainer > textarea:focus {
+  outline: none;
+}
+.spNewComment__submit {
+  font-weight: bold;
+}
+.spNewComment__submit--disabled {
+  color: #f8816c;
+}
+.spNewComment__submit--enabled {
+  cursor: pointer;
+  color: #ff5132;
+}
+
+/* Comment component styles */
+.Comment {
+  display: flex;
+  padding: 12px 0px 12px 0;
+}
+.commentAvatar__container {
+  margin-right: 14px;
+}
+.comment__avatar {
+  width: 32px;
+}
+.commentContent__container {
+  text-align: left;
+  display: block;
+}
+.comment__author {
+  font-weight: bold;
+}

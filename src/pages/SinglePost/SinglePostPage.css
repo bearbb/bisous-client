@@ -1,0 +1,13 @@
+.SinglePostPage {
+  background-color: #ffffff;
+  width: auto;
+  /* height: 100%; */
+  /* height: auto; */
+}
+.SinglePostBody__container {
+  padding-top: 73px;
+  height: 100%;
+  padding-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
