@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faBell } from "@fortawesome/fontawesome-free-regular";
 import { faBars } from "@fortawesome/fontawesome-free-solid";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { useHistory } from "react-router-dom";
 
 const MessageIcon = faEnvelope as IconProp;
 const NotificationIcon = faBell as IconProp;
@@ -11,7 +12,10 @@ const OthersIcon = faBars as IconProp;
 interface UtilityProps {}
 
 export const Utility: React.FC<UtilityProps> = ({}) => {
-  const messageHandler = () => {};
+  const history = useHistory();
+  const messageHandler = () => {
+    history.push("/message");
+  };
   const notificationHandler = () => {};
   const settingHandler = () => {};
 

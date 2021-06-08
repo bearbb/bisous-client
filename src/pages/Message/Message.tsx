@@ -10,7 +10,7 @@ import avatar from "styles/images/avatar.webp";
 
 import { FriendInformation } from "pages/Message/FriendInformation";
 
-interface friendData {
+export interface friendData {
   friendName: string;
   friendId: string;
   friendAvatar: string;

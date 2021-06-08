@@ -1,0 +1,104 @@
+.UserDetail {
+  padding-top: 53px;
+  width: 100%;
+  padding-bottom: 30px;
+}
+.user__container {
+  padding-left: 20%;
+  padding-right: 20%;
+  height: 100%;
+  width: 100%;
+}
+.userDetailInformation__container {
+  /* margin-top: 20px; */
+  padding: 30px 20px 30px 20px;
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid rgba(47, 47, 47, 0.233);
+}
+.userDetailInformation__container > :nth-child(1) {
+  flex: 1 1;
+}
+.userDetailInformation__container > :nth-child(2) {
+  flex: 2 1;
+}
+.userIn4Avatar__container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.userIn4__avatar {
+  width: 150px;
+}
+
+.userIn4Detail__container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 20px 10px 20px;
+}
+
+.userIn4Username__container > h2 {
+  margin: 0;
+}
+.userIn4__username {
+  font-weight: 600;
+  font-size: 2.2rem;
+}
+
+.userIn4Count__container {
+  display: flex;
+}
+.userIn4Count__container > * {
+  margin-right: 40px;
+}
+.userIn4Count__span--bold {
+  font-weight: 600;
+}
+
+.userPost__container {
+  /* height: 100%; */
+  width: 100%;
+}
+.userPost__descriptionHeader {
+  /* text-align: left; */
+  /* margin-left: 20px; */
+}
+
+.ppImg__container {
+  height: auto;
+  width: auto;
+}
+.pp__img {
+  width: 19vw;
+  height: 19vw;
+  object-fit: cover;
+}
+.PostPreview {
+  display: flex;
+  flex-shrink: 0;
+  width: 100%;
+  justify-content: space-between;
+}
+.PP__hoverContainer {
+  width: auto;
+  height: auto;
+}
+.PP__hoverContainer:hover {
+  background-color: rgba(0, 0, 0, 0.65);
+  cursor: pointer;
+}
+.PostPreview__container {
+  width: auto;
+  height: auto;
+}
+.PostPreview__suContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.PostPreview__suContainer > * {
+  margin-top: 1vw;
+}

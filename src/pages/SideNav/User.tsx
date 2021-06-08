@@ -1,4 +1,5 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 import "../../styles/Feed__user.css";
 import avatar from "../../styles/images/avatar.webp";
 
@@ -20,14 +21,21 @@ export const User: React.FC<UserProps> = ({
   followingCount,
 }) => {
   const userNameHandler = () => {};
+  const navToUserPage = () => {
+    history.push("/user");
+  };
+  const history = useHistory();
   return (
     <div className="User">
       <div className="userInformation__container">
-        <div className="userInformation__avatarContainer">
+        <div
+          className="userInformation__avatarContainer"
+          onClick={navToUserPage}
+        >
           <img src={avatar} alt="" className="userInformation__avatar" />
         </div>
         <div className="userInformation__description">
-          <span className="userInformation__userName" onClick={userNameHandler}>
+          <span className="userInformation__userName" onClick={navToUserPage}>
             {userName}
           </span>
           <span className="userInformation__name">{name}</span>

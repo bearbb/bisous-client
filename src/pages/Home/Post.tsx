@@ -7,12 +7,15 @@ import {
   faShareSquare,
   faBookmark,
 } from "@fortawesome/fontawesome-free-regular";
+import { faEllipsisH } from "@fortawesome/fontawesome-free-solid";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { useHistory } from "react-router-dom";
 
 const HeartIcon = faHeart as IconProp;
 const CommentIcon = faComment as IconProp;
 const ShareIcon = faShareSquare as IconProp;
 const FavoriteIcon = faBookmark as IconProp;
+const MoreIcon = faEllipsisH as IconProp;
 interface PostProps {
   postId: string;
   authorAvatar: string;
@@ -44,6 +47,7 @@ export const Post: React.FC<PostProps> = ({
   isShared,
   isSaved,
 }) => {
+  const history = useHistory();
   const [comment, setComment] = useState<string>("");
   const [commentIsEmpty, setCommentIsEmpty] = useState<boolean>(true);
   const [postIsLiked, setPostIsLiked] = useState<boolean>(isLiked);
@@ -68,6 +72,10 @@ export const Post: React.FC<PostProps> = ({
   const likeHandler = () => {};
   const shareHandler = () => {};
   const saveHandler = () => {};
+  const moreHandler = () => {
+    //pass in post id and navigate to that post
+    history.push("/p");
+  };
   useEffect(() => {
     //check if comment is empty
     if (comment == "") {
@@ -79,9 +87,16 @@ export const Post: React.FC<PostProps> = ({
   }, [comment]);
   return (
     <div className="Post">
-      <div className="post__user">
-        <img src={authorAvatar} alt="" className="postUser__avatar" />
-        <span className="postUser__userName">{authorName}</span>
+      <div className="post__header">
+        <div className="post__user">
+          <img src={authorAvatar} alt="" className="postUser__avatar" />
+          <span className="postUser__userName">{authorName}</span>
+        </div>
+        <div className="postMore__container">
+          <span className="post__more" onClick={moreHandler}>
+            <FontAwesomeIcon icon={MoreIcon} size="lg" />
+          </span>
+        </div>
       </div>
       <div className="postImage__container">
         <img className="post__image" src={postImg} alt="" />

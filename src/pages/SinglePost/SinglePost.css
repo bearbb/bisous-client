@@ -1,12 +1,16 @@
 /* SinglePost styles */
+/* .SinglePost__container {
+  width: 100%;
+  height: 100%;
+} */
 .SinglePost {
   /* display: flex; */
   width: auto;
-  border: 1px solid rgba(47, 47, 47, 0.233);
   /* align-items: stretch; */
 }
 .sp__container {
   height: auto;
+  border: 1px solid rgba(47, 47, 47, 0.233);
   display: flex;
   flex-flow: column;
   position: relative;
@@ -43,10 +47,10 @@
 }
 .spDescription__1th {
   border-bottom: 1px solid rgba(47, 47, 47, 0.233);
-  height: calc(100% - 110px);
+  height: calc(100% - 129px);
   /* overflow-y: auto; */
 }
-.spDecription__2nd {
+.spDescription__2nd {
   height: auto;
 }
 .sp__avatar {
@@ -66,10 +70,6 @@
 }
 .sp__username {
   font-weight: bold;
-}
-
-.spCaption__container > div {
-  /* padding-top: 0 !important; */
 }
 
 .spComment__container {
@@ -112,8 +112,11 @@
   padding-left: 16px;
   text-align: left;
 }
-.spDetail__container > * {
+.spLikeCount__container {
   font-weight: bold;
+}
+.spTimeSince__container {
+  font-weight: 300;
 }
 
 /* Add new comment section */
@@ -166,3 +169,5 @@
 .comment__author {
   font-weight: bold;
 }
+
+/* Share section */

@@ -1,0 +1,81 @@
+.Share {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.share__container {
+  z-index: 101;
+  background-color: #ffffff;
+  height: 60vh;
+  width: 60vh;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+}
+.shareHeader__container {
+  height: 9%;
+  border-bottom: 1px solid rgba(47, 47, 47, 0.233);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.share__header {
+  font-weight: 600;
+  font-size: 1.4rem;
+}
+.shareFriendList__description {
+  text-align: left;
+  margin: 16px;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+.shareFriendList__container {
+  height: 78%;
+  border-bottom: 1px solid rgba(47, 47, 47, 0.233);
+  overflow-y: auto;
+}
+.FriendList__container {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+.friend__container {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px 8px 16px;
+}
+.friendAvatar__container {
+  margin-right: 12px;
+}
+.friend__avatar {
+  width: 44px;
+}
+.friendDetail__container {
+}
+.friend__name {
+  font-weight: bold;
+}
+
+.shareSubmit__container {
+  height: 14%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+.share__submit {
+  background-color: #b2dffc;
+  height: 100%;
+  width: 100%;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.shareSubmit__span {
+  color: white;
+}

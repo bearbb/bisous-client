@@ -21,14 +21,47 @@ const ShareIcon = faShareSquare as IconProp;
 const FavoriteIcon = faBookmark as IconProp;
 const FavoriteSolidIcon = faBookmarkSolid as IconProp;
 
-export const SinglePost: React.FC<PostData> = ({
+function timeSince(date: string) {
+  let d = new Date(date).getTime();
+  let currentTime = new Date().getTime();
+  let diffTime = currentTime - d;
+  let seconds = diffTime / 1000;
+
+  var interval = seconds / 31536000;
+
+  if (interval > 1) {
+    return Math.floor(interval) + " years";
+  }
+  interval = seconds / 2592000;
+  if (interval > 1) {
+    return Math.floor(interval) + " months";
+  }
+  interval = seconds / 86400;
+  if (interval > 1) {
+    return Math.floor(interval) + " days";
+  }
+  interval = seconds / 3600;
+  if (interval > 1) {
+    return Math.floor(interval) + " hours";
+  }
+  interval = seconds / 60;
+  if (interval > 1) {
+    return Math.floor(interval) + " minutes";
+  }
+  return Math.floor(seconds) + " seconds";
+}
+interface SinglePostProps extends PostData {}
+
+export const SinglePost: React.FC<SinglePostProps> = ({
   pictures,
   likeCount,
   comments,
   caption,
   author,
   createdAt,
+  shareOnClickHandler,
 }) => {
+  const [timeSinceCreated, setTimeSinceCreated] = useState<string>("");
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const [newComment, setNewComment] = useState<string>("");
@@ -36,6 +69,11 @@ export const SinglePost: React.FC<PostData> = ({
   const newCommentHandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setNewComment(event.target.value.toString());
   };
+  useEffect(() => {
+    let temp = timeSince(createdAt);
+    setTimeSinceCreated(temp);
+    return () => {};
+  }, []);
   //check if comment is empty
   useEffect(() => {
     if (newComment == "") {
@@ -65,7 +103,7 @@ export const SinglePost: React.FC<PostData> = ({
       newCommentInputRef.current!.focus();
     }
   };
-  const shareHandler = () => {};
+  // const shareHandler = () => {};
   const saveHandler = () => {
     setIsSaved(!isSaved);
   };
@@ -83,102 +121,119 @@ export const SinglePost: React.FC<PostData> = ({
     return <ul>{render}</ul>;
   };
   return (
-    <div className="SinglePost">
-      <div className="sp__container">
-        <div
-          className="spImage__container"
-          onDoubleClick={doubleClickLikeHandler}
-        >
-          <img src={pictures} alt="" className="sp__img" />
-        </div>
-        <div className="spDescription__container">
-          <div className="spDescription__1th">
-            <div className="spAuthor__container">
-              <div className="spAvatar__container">
-                <img src={author.avatar} alt="" className="sp__avatar" />
-              </div>
-              <div className="spUsername__container">
-                <span className="sp__username">{author.username}</span>
-              </div>
-            </div>
-            <div className="spComment__container">
-              <div className="spCommentList__container">
-                {/* Render out caption as a comment element */}
-                <div className="spCaption__container">
-                  <Comment
-                    avatar={author.avatar}
-                    username={author.username}
-                    content={caption}
-                  />
-                </div>
-                {/*Function to render all comment out */}
-                {renderCommentList(comments)}
-              </div>
-            </div>
+    <div className="SinglePost__container">
+      <div className="SinglePost">
+        <div className="sp__container">
+          <div
+            className="spImage__container"
+            onDoubleClick={doubleClickLikeHandler}
+          >
+            <img src={pictures} alt="" className="sp__img" />
           </div>
-          <div className="spDescription__2nd">
-            <div className="spInteraction__container">
-              <div className="spInteraction__container--left">
-                <span className="spInteraction__icon" onClick={likeHandler}>
-                  {isLiked ? (
-                    <FontAwesomeIcon
-                      icon={HeartSolidIcon}
-                      size="lg"
-                      color="#ff6347"
-                    />
-                  ) : (
-                    <FontAwesomeIcon icon={HeartIcon} size="lg" />
-                  )}
-                </span>
-                <span className="spInteraction__icon" onClick={commentHandler}>
-                  <FontAwesomeIcon icon={CommentIcon} size="lg" />
-                </span>
-                <span className="spInteraction__icon" onClick={shareHandler}>
-                  <FontAwesomeIcon icon={ShareIcon} size="lg" />
-                </span>
+          <div className="spDescription__container">
+            <div className="spDescription__1th">
+              <div className="spAuthor__container">
+                <div className="spAvatar__container">
+                  <img src={author.avatar} alt="" className="sp__avatar" />
+                </div>
+                <div className="spUsername__container">
+                  <span className="sp__username">{author.username}</span>
+                </div>
               </div>
-              <div className="spInteraction__container--right">
-                <span className="spInteraction__icon" onClick={saveHandler}>
-                  {isSaved ? (
-                    <FontAwesomeIcon
-                      icon={FavoriteSolidIcon}
-                      size="lg"
-                      color="#ff6347"
+              <div className="spComment__container">
+                <div className="spCommentList__container">
+                  {/* Render out caption as a comment element */}
+                  <div className="spCaption__container">
+                    <Comment
+                      avatar={author.avatar}
+                      username={author.username}
+                      content={caption}
                     />
-                  ) : (
-                    <FontAwesomeIcon icon={FavoriteIcon} size="lg" />
-                  )}
-                </span>
+                  </div>
+                  {/*Function to render all comment out */}
+                  {renderCommentList(comments)}
+                </div>
               </div>
             </div>
-            <div className="spDetail__container">
-              {/* show like count */}
-              <span className="spDetail__likeCount">{likeCount}</span>
-              <span className="spDetail__extraSpace"> </span>
-              <span className="spDetail__descriptions">
-                {likeCount >= 2 ? "likes" : "like"}
-              </span>
-            </div>
-            <div className="spNewComment__container">
-              <div className="spNewComment__inputContainer">
-                <textarea
-                  ref={newCommentInputRef}
-                  placeholder="Add a comment..."
-                  className="spNewComment__textarea"
-                  onChange={(e) => {
-                    newCommentHandler(e);
-                  }}
-                ></textarea>
-                <span
-                  onClick={newCommentSubmitHandler}
-                  className={`spNewComment__submit ${
-                    newCommentIsEmpty
-                      ? "spNewComment__submit--disabled"
-                      : "spNewComment__submit--enabled"
-                  }`}
-                >
-                  Post
-                </span>
+            <div className="spDescription__2nd">
+              <div className="spInteraction__container">
+                <div className="spInteraction__container--left">
+                  <span className="spInteraction__icon" onClick={likeHandler}>
+                    {isLiked ? (
+                      <FontAwesomeIcon
+                        icon={HeartSolidIcon}
+                        size="lg"
+                        color="#ff6347"
+                      />
+                    ) : (
+                      <FontAwesomeIcon icon={HeartIcon} size="lg" />
+                    )}
+                  </span>
+                  <span
+                    className="spInteraction__icon"
+                    onClick={commentHandler}
+                  >
+                    <FontAwesomeIcon icon={CommentIcon} size="lg" />
+                  </span>
+                  <span
+                    className="spInteraction__icon"
+                    onClick={() => {
+                      shareOnClickHandler();
+                    }}
+                  >
+                    <FontAwesomeIcon icon={ShareIcon} size="lg" />
+                  </span>
+                </div>
+                <div className="spInteraction__container--right">
+                  <span className="spInteraction__icon" onClick={saveHandler}>
+                    {isSaved ? (
+                      <FontAwesomeIcon
+                        icon={FavoriteSolidIcon}
+                        size="lg"
+                        color="#ff6347"
+                      />
+                    ) : (
+                      <FontAwesomeIcon icon={FavoriteIcon} size="lg" />
+                    )}
+                  </span>
+                </div>
+              </div>
+              <div className="spDetail__container">
+                <div className="spLikeCount__container">
+                  {/* show like count */}
+                  <span className="spDetail__likeCount">{likeCount}</span>
+                  <span className="spDetail__extraSpace"> </span>
+                  <span className="spDetail__descriptions">
+                    {likeCount >= 2 ? "likes" : "like"}
+                  </span>
+                </div>
+                <div className="spTimeSince__container">
+                  <span className="spDetail__timeSince">
+                    {timeSinceCreated}
+                  </span>
+                </div>
+              </div>
+              <div className="spNewComment__container">
+                <div className="spNewComment__inputContainer">
+                  <textarea
+                    ref={newCommentInputRef}
+                    placeholder="Add a comment..."
+                    className="spNewComment__textarea"
+                    onChange={(e) => {
+                      newCommentHandler(e);
+                    }}
+                  ></textarea>
+                  <span
+                    onClick={newCommentSubmitHandler}
+                    className={`spNewComment__submit ${
+                      newCommentIsEmpty
+                        ? "spNewComment__submit--disabled"
+                        : "spNewComment__submit--enabled"
+                    }`}
+                  >
+                    Post
+                  </span>
+                </div>
               </div>
             </div>
           </div>

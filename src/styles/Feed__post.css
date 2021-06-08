@@ -19,6 +19,12 @@
 .Post > :last-child {
   margin-bottom: 30px;
 }
+.post__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* padding: 8px 16px 8px 16px; */
+}
 
 .post__user {
   display: flex;
@@ -32,6 +38,12 @@
   width: 50px;
   margin-right: 10px;
 }
+.postMore__container {
+}
+.post__more {
+  cursor: pointer;
+}
+
 .postImage__container {
   flex: 1;
 }
