@@ -83,7 +83,6 @@ export const Post: React.FC<PostProps> = ({
     } else {
       setCommentIsEmpty(false);
     }
-    console.log(commentIsEmpty);
   }, [comment]);
   return (
     <div className="Post">
