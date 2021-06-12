@@ -10,6 +10,21 @@ import avatar from "styles/images/avatar.webp";
 import postImg from "styles/images/wallpaper.jpg";
 import { LoadingScreen } from "pages/LoadingScreen/LoadingScreen";
 import { useHistory } from "react-router-dom";
+import axios from "axios";
+const axiosInstance = axios.create({
+  baseURL: "https://application.swanoogie.me/api",
+  withCredentials: true,
+});
+const getUserName = async (): Promise<string> => {
+  try {
+    let res = await axiosInstance.get("/users");
+    console.log(res);
+    return res.data.username;
+  } catch (error) {
+    console.error(error.response);
+    return error.response;
+  }
+};
 
 interface FeedsProps {}
 
@@ -27,8 +42,12 @@ export const Feeds: React.FC<FeedsProps> = ({}) => {
   useEffect(() => {
     console.log();
     (async () => {
-      const res: boolean = await responseAfterSeconds(false);
-      setIsLoggedIn(res);
+      // const res: boolean = await responseAfterSeconds(false);
+
+      // setIsLoggedIn(res);
+      let userName = await getUserName();
+      console.log(userName);
+      setIsLoggedIn(true);
       console.log(isLoggedIn);
       setIsFetching(false);
     })();
