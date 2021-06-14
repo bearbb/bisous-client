@@ -4,54 +4,76 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHeart,
   faComment,
-  faShareSquare,
   faBookmark,
 } from "@fortawesome/fontawesome-free-regular";
+import { faHeart as HeartSolid } from "@fortawesome/fontawesome-free-solid";
 import { faEllipsisH } from "@fortawesome/fontawesome-free-solid";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useHistory } from "react-router-dom";
+import axios from "axios";
+import LazyLoad from "react-lazyload";
+const axiosInstance = axios.create({
+  baseURL: "https://application.swanoogie.me/api",
+  withCredentials: true,
+});
 
 const HeartIcon = faHeart as IconProp;
+const HeartSolidIcon = HeartSolid as IconProp;
 const CommentIcon = faComment as IconProp;
-const ShareIcon = faShareSquare as IconProp;
 const FavoriteIcon = faBookmark as IconProp;
 const MoreIcon = faEllipsisH as IconProp;
-interface PostProps {
+export interface PostProps {
   postId: string;
   authorAvatar: string;
   authorName: string;
   postImg: string;
   likeCount: number;
   commentCount: number;
-  shareCount: number;
   saveCount: number;
   caption: string;
   userAvatar: string;
   isLiked: boolean;
-  isShared: boolean;
   isSaved: boolean;
 }
 
+const likePost = async (postId: string) => {
+  try {
+    let res = await axiosInstance.post(`/posts/${postId}/likes`);
+    console.log(res);
+    return res.data;
+  } catch (err) {
+    console.error(err);
+    return { error: err.response };
+  }
+};
+const unlikePost = async (postId: string) => {
+  try {
+    let res = await axiosInstance.delete(`/posts/${postId}/likes`);
+    console.log(res);
+    return res.data;
+  } catch (err) {
+    console.error(err);
+    return { error: err.response };
+  }
+};
 export const Post: React.FC<PostProps> = ({
   postId,
   authorAvatar,
   authorName,
   postImg,
   likeCount,
-  shareCount,
   commentCount,
   saveCount,
   caption,
   userAvatar,
   isLiked,
-  isShared,
   isSaved,
 }) => {
   const history = useHistory();
   const [comment, setComment] = useState<string>("");
   const [commentIsEmpty, setCommentIsEmpty] = useState<boolean>(true);
   const [postIsLiked, setPostIsLiked] = useState<boolean>(isLiked);
-  const [postIsShared, setPostIsShared] = useState<boolean>(isShared);
+  const [postLikeCount, setPostLikeCount] = useState<number>(likeCount);
   const [postIsSaved, setPostIsSaved] = useState<boolean>(isSaved);
   const commentHandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(event.target.value.toString());
@@ -69,8 +91,18 @@ export const Post: React.FC<PostProps> = ({
     );
   };
   //if already liked or shared or saved then on click => unlike,...
-  const likeHandler = () => {};
-  const shareHandler = () => {};
+  const likeHandler = async () => {
+    let res;
+    if (postIsLiked) {
+      res = await unlikePost(postId);
+    } else {
+      res = await likePost(postId);
+    }
+    if (res && !res.error) {
+      setPostIsLiked(!postIsLiked);
+      setPostLikeCount(res.post.likeCount);
+    }
+  };
   const saveHandler = () => {};
   const moreHandler = () => {
     //pass in post id and navigate to that post
@@ -88,7 +120,9 @@ export const Post: React.FC<PostProps> = ({
     <div className="Post">
       <div className="post__header">
         <div className="post__user">
-          <img src={authorAvatar} alt="" className="postUser__avatar" />
+          <LazyLoad>
+            <img src={authorAvatar} alt="" className="postUser__avatar" />
+          </LazyLoad>
           <span className="postUser__userName">{authorName}</span>
         </div>
         <div className="postMore__container">
@@ -98,20 +132,27 @@ export const Post: React.FC<PostProps> = ({
         </div>
       </div>
       <div className="postImage__container">
-        <img className="post__image" src={postImg} alt="" />
+        <LazyLoad>
+          <img className="post__image" src={postImg} alt="" />
+        </LazyLoad>
       </div>
       <div className="post__information">
         <div className="postIn4">
           <span
+            onClick={likeHandler}
             className={`postIn4__icon ${
-              isLiked
+              postIsLiked
                 ? "postIn4__likeIcon--liked postIn4__icon--active"
                 : "postIn4__likeIcon--notLiked"
             }`}
           >
-            <FontAwesomeIcon icon={HeartIcon} size="lg" />
+            {postIsLiked ? (
+              <FontAwesomeIcon icon={HeartSolidIcon} size="lg" />
+            ) : (
+              <FontAwesomeIcon icon={HeartIcon} size="lg" />
+            )}
           </span>
-          <span className="postIn4__like">{likeCount} likes</span>
+          <span className="postIn4__like">{postLikeCount} likes</span>
         </div>
         <div className="postIn4">
           <span className={`postIn4__icon`}>
@@ -119,7 +160,7 @@ export const Post: React.FC<PostProps> = ({
           </span>
           <span className="postIn4__comment">{commentCount} comments</span>
         </div>
-        <div className="postIn4">
+        {/* <div className="postIn4">
           <span
             className={`postIn4__icon ${
               isShared
@@ -130,7 +171,7 @@ export const Post: React.FC<PostProps> = ({
             <FontAwesomeIcon icon={ShareIcon} size="lg" />
           </span>
           <span className="postIn4__share">{shareCount} shares</span>
-        </div>
+        </div> */}
         <div className="postIn4">
           <span
             className={`postIn4__icon ${
@@ -148,7 +189,9 @@ export const Post: React.FC<PostProps> = ({
         <span className="postCaption__content">{caption}</span>
       </div>
       <div className="post__comment">
-        <img src={userAvatar} alt="" className="postComment__avatar" />
+        <LazyLoad>
+          <img src={userAvatar} alt="" className="postComment__avatar" />
+        </LazyLoad>
         <textarea
           className="postComment__input"
           placeholder="Add a comment..."
