@@ -55,7 +55,7 @@ body,
 #input-field {
   margin-left: 10vw;
   width: 450px;
-  height: 750px;
+  /* height: 750px; */
   border-radius: 30px;
   padding: 20px;
   font-size: 30px;
@@ -91,6 +91,9 @@ body,
   font-size: 1.1rem;
   font-weight: 450;
   box-sizing: border-box;
+}
+.password__input--red {
+  border: solid rgba(251, 27, 76, 0.87) 2px !important;
 }
 .credential-input > input:focus {
   outline: none;
@@ -136,15 +139,17 @@ body,
   height: 60px;
   border-radius: 12px;
 }
-#sign-up-button {
-  background-color: #1f1f20;
-  font-size: 1.1rem;
-  color: #fefcfd;
+.signup__button--default {
   font-weight: 500;
-  width: 130px;
+  width: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 1.1rem;
+  color: #fefcfd;
+}
+#signup__button--enabled {
+  background-color: #1f1f20;
   background: linear-gradient(to left, #1f1f20 50%, #da4b84 50%) right;
   background-size: 200%;
   transition: all 0.35s ease-out;
@@ -153,8 +158,29 @@ body,
   cursor: pointer;
   background-position: left;
 }
-#sign-up-button:hover {
+#singup__button--:enabled:hover {
   background-position: left;
+}
+#signup__button--disabled {
+  background-color: #666666 !important;
+  cursor: auto;
+}
+.submit-field {
+  display: flex;
+  justify-content: space-between;
+  height: 60px;
+}
+.submit-field > :nth-child(1) {
+  flex: 1 1 30%;
+  margin-right: 10px;
+}
+.submit-field > :nth-child(2) {
+  flex: 0 1 70%;
+}
+.submit__error {
+  font-size: 0.5rem;
+  text-align: right;
+  color: rgba(251, 27, 76, 0.87);
 }
 /* #sign-in-button:hover:after {
   width: 100%;

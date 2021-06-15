@@ -11,12 +11,8 @@ import postImg from "styles/images/wallpaper.jpg";
 import { LoadingScreen } from "pages/LoadingScreen/LoadingScreen";
 import { useHistory } from "react-router-dom";
 import LazyLoad from "react-lazyload";
-import axios from "axios";
+import axiosInstance from "Utility/axios";
 import sleep from "Utility/sleep";
-const axiosInstance = axios.create({
-  baseURL: "https://application.swanoogie.me/api",
-  withCredentials: true,
-});
 interface GetUserData {
   username?: string;
   userId?: string;
@@ -174,17 +170,17 @@ export const Feeds: React.FC<FeedsProps> = ({}) => {
     console.log();
     (async () => {
       let getUserNameRes = await getUserName();
-      let data = await getPostsData();
-      let data2 = await getAuthorsAvatar(data);
-      let data3 = await getLikedNSavedStatus(data2, getUserNameRes);
-      let data4 = await getImagesData(data3);
-      setPostsData(data4);
-      console.log(data4);
-      await sleep(300);
       if (getUserNameRes.error) {
         setIsLoggedIn(false);
       } else {
         setIsLoggedIn(true);
+        let data = await getPostsData();
+        let data2 = await getAuthorsAvatar(data);
+        let data3 = await getLikedNSavedStatus(data2, getUserNameRes);
+        let data4 = await getImagesData(data3);
+        setPostsData(data4);
+        console.log(data4);
+        await sleep(300);
       }
       setIsFetching(false);
     })();

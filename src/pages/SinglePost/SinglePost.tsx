@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { PostData, comment } from "pages/SinglePost/SinglePostPage";
+import { GetPostData, CommentData } from "pages/SinglePost/SinglePostPage";
 import "pages/SinglePost/SinglePost.css";
 import { Comment } from "pages/SinglePost/Comment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,6 +14,9 @@ import {
   faBookmark as faBookmarkSolid,
 } from "@fortawesome/fontawesome-free-solid";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { likePost, unlikePost } from "Utility/like";
+import { commentPost } from "Utility/comment";
+import avatar from "styles/images/avatar.webp";
 const HeartIcon = faHeart as IconProp;
 const HeartSolidIcon = faHeartSolid as IconProp;
 const CommentIcon = faComment as IconProp;
@@ -50,20 +53,23 @@ function timeSince(date: string) {
   }
   return Math.floor(seconds) + " seconds";
 }
-interface SinglePostProps extends PostData {}
 
-export const SinglePost: React.FC<SinglePostProps> = ({
+export const SinglePost: React.FC<GetPostData> = ({
   pictures,
   likeCount,
   comments,
   caption,
   author,
   createdAt,
+  isLiked,
+  _id,
   shareOnClickHandler,
 }) => {
   const [timeSinceCreated, setTimeSinceCreated] = useState<string>("");
-  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [postLikeCount, setPostLikeCount] = useState<number>(likeCount);
+  const [postIsLiked, setPostIsLiked] = useState<boolean>(isLiked);
   const [isSaved, setIsSaved] = useState<boolean>(false);
+  const [commentsList, setCommentsList] = useState<CommentData[]>(comments);
   const [newComment, setNewComment] = useState<string>("");
   const [newCommentIsEmpty, setNewCommentIsEmpty] = useState<boolean>(true);
   const newCommentHandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -83,19 +89,37 @@ export const SinglePost: React.FC<SinglePostProps> = ({
     }
     return () => {};
   }, [newComment]);
-  const newCommentSubmitHandler = () => {
-    console.log(
-      `%cPost clicked`,
-      "background: #292d3e; color: #f07178; font-weight: bold"
-    );
+  const newCommentSubmitHandler = async () => {
+    try {
+      if (!newCommentIsEmpty) {
+        let res = await commentPost(_id, newComment);
+        setCommentsList(res.post.comments);
+        setNewComment("");
+        newCommentInputRef.current!.value = "";
+        console.log(res);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   //Interaction handler(like,...)
-  const likeHandler = () => {
-    setIsLiked(!isLiked);
+  const likeHandler = async () => {
+    try {
+      let likeRes;
+      if (postIsLiked) {
+        likeRes = await unlikePost(_id);
+      } else {
+        likeRes = await likePost(_id);
+      }
+      setPostIsLiked(!postIsLiked);
+      setPostLikeCount(likeRes.post.likeCount);
+    } catch (error) {
+      console.error(error);
+    }
   };
-  const doubleClickLikeHandler = () => {
-    setIsLiked(true);
+  const doubleClickLikeHandler = async () => {
+    await likeHandler();
   };
   const newCommentInputRef = useRef<HTMLTextAreaElement>(null);
   const commentHandler = () => {
@@ -107,17 +131,22 @@ export const SinglePost: React.FC<SinglePostProps> = ({
   const saveHandler = () => {
     setIsSaved(!isSaved);
   };
-  const renderCommentList = (commentData: comment[]): React.ReactElement => {
+  const renderCommentList = (
+    commentData: CommentData[]
+  ): React.ReactElement => {
     //loop through all comments
-    let render = commentData.map((comment) => {
-      return (
-        <Comment
-          avatar={comment.author.avatar}
-          content={comment.comment}
-          username={author.username}
-        ></Comment>
-      );
-    });
+    let render = commentData
+      .slice(0)
+      .reverse()
+      .map((comment) => {
+        return (
+          <Comment
+            avatar={avatar}
+            content={comment.comment}
+            username={author.username}
+          ></Comment>
+        );
+      });
     return <ul>{render}</ul>;
   };
   return (
@@ -128,13 +157,13 @@ export const SinglePost: React.FC<SinglePostProps> = ({
             className="spImage__container"
             onDoubleClick={doubleClickLikeHandler}
           >
-            <img src={pictures} alt="" className="sp__img" />
+            <img src={pictures[0]} alt="" className="sp__img" />
           </div>
           <div className="spDescription__container">
             <div className="spDescription__1th">
               <div className="spAuthor__container">
                 <div className="spAvatar__container">
-                  <img src={author.avatar} alt="" className="sp__avatar" />
+                  <img src={avatar} alt="" className="sp__avatar" />
                 </div>
                 <div className="spUsername__container">
                   <span className="sp__username">{author.username}</span>
@@ -145,13 +174,13 @@ export const SinglePost: React.FC<SinglePostProps> = ({
                   {/* Render out caption as a comment element */}
                   <div className="spCaption__container">
                     <Comment
-                      avatar={author.avatar}
+                      avatar={avatar}
                       username={author.username}
                       content={caption}
                     />
                   </div>
                   {/*Function to render all comment out */}
-                  {renderCommentList(comments)}
+                  {renderCommentList(commentsList)}
                 </div>
               </div>
             </div>
@@ -159,7 +188,7 @@ export const SinglePost: React.FC<SinglePostProps> = ({
               <div className="spInteraction__container">
                 <div className="spInteraction__container--left">
                   <span className="spInteraction__icon" onClick={likeHandler}>
-                    {isLiked ? (
+                    {postIsLiked ? (
                       <FontAwesomeIcon
                         icon={HeartSolidIcon}
                         size="lg"
@@ -201,10 +230,10 @@ export const SinglePost: React.FC<SinglePostProps> = ({
               <div className="spDetail__container">
                 <div className="spLikeCount__container">
                   {/* show like count */}
-                  <span className="spDetail__likeCount">{likeCount}</span>
+                  <span className="spDetail__likeCount">{postLikeCount}</span>
                   <span className="spDetail__extraSpace"> </span>
                   <span className="spDetail__descriptions">
-                    {likeCount >= 2 ? "likes" : "like"}
+                    {postLikeCount >= 2 ? "likes" : "like"}
                   </span>
                 </div>
                 <div className="spTimeSince__container">

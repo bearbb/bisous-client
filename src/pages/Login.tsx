@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle, faFacebookF } from "@fortawesome/free-brands-svg-icons";
+import { faSpinner } from "@fortawesome/fontawesome-free-solid";
 import { useHistory } from "react-router-dom";
-import "../styles/Login.css";
-import axios from "axios";
-
-const instance = axios.create({
-  baseURL: "https://application.swanoogie.me/api",
-  withCredentials: true,
-});
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import "styles/Login.css";
+import axiosInstance from "Utility/axios";
+const LoadingIcon = faSpinner as IconProp;
 interface LoginProps {}
 interface UserCredential {
   username: string;
@@ -24,7 +22,7 @@ interface loginRes {
 
 const axiosLogin = async (data: UserCredential): Promise<loginRes> => {
   try {
-    const res = await instance.post("/users/login", data);
+    const res = await axiosInstance.post("/users/login", data);
     return { token: res.data.token };
   } catch (error) {
     let errorData = error.response.data;
@@ -39,6 +37,8 @@ export const Login: React.FC<LoginProps> = ({}) => {
   const [password, setPassword] = useState<string>("");
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [credentialIsEmpty, setCredentialIsEmpty] = useState<boolean>(true);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [loginErr, setLoginErr] = useState<string>("");
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const userNameHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserName(event.target.value.toString());
@@ -47,27 +47,10 @@ export const Login: React.FC<LoginProps> = ({}) => {
     setPassword(event.target.value.toString());
   };
   const onEnterPress = async (event: React.KeyboardEvent<HTMLDivElement>) => {
-    console.log("isEmpty", credentialIsEmpty);
     if (event.key === "Enter" && !credentialIsEmpty) {
-      console.log(
-        `%cNhan cd`,
-        "background: #292d3e; color: #f07178; font-weight: bold"
-      );
       await signInHandler();
-    } else {
-      console.log(
-        `%cEnter cái cc`,
-        "background: #292d3e; color: #f07178; font-weight: bold"
-      );
     }
   };
-  useEffect(() => {
-    console.log(
-      `%cPassword: ${password}`,
-      "background: #292d3e; color: #f07178; font-weight: bold"
-    );
-    return () => {};
-  }, [password]);
   useEffect(() => {
     if (userName === "" || password === "") {
       setCredentialIsEmpty(true);
@@ -83,24 +66,24 @@ export const Login: React.FC<LoginProps> = ({}) => {
   const navToSignUp = () => {
     history.push("/signup");
   };
-  useEffect(() => {
-    console.log(
-      `%c${isLogin}`,
-      "background: #292d3e; color: #f07178; font-weight: bold"
-    );
-    return () => {};
-  }, [isLogin]);
+  // useEffect(() => { console.log(
+  //     `%c${isLogin}`,
+  //     "background: #292d3e; color: #f07178; font-weight: bold"
+  //   );
+  //   return () => {};
+  // }, [isLogin]);
   const signInHandler = async () => {
     //TODO: perform a logic checking on username and password before send to api
     //Exec login
     //clear password field after click
     try {
       setIsLogin(true);
+      setIsFetching(true);
       let res = await axiosLogin({ username: userName, password });
       if (res.error) {
-        console.error(res.error);
+        setLoginErr(res.error.errorMsg);
       } else {
-        console.log(res.token);
+        // console.log(res.token);
         history.push("/");
       }
       setIsLogin(false);
@@ -109,6 +92,7 @@ export const Login: React.FC<LoginProps> = ({}) => {
     } catch (error) {
       console.error(error);
     }
+    setIsFetching(false);
   };
   return (
     <div id="body">
@@ -174,14 +158,29 @@ export const Login: React.FC<LoginProps> = ({}) => {
               }}
             />
           </div>
+          <span className="login__error">{loginErr}</span>
           <div className="submit-field">
-            <span
-              className="same-height-element-1 input-field-button"
-              id="sign-in-button"
-              onClick={signInHandler}
-            >
-              <span>Sign in</span>
-            </span>
+            {!isFetching ? (
+              <span
+                className="same-height-element-1 input-field-button signin__button--default"
+                // id="sign-in-button"
+                id={`${
+                  credentialIsEmpty
+                    ? "sign-in-button--disabled"
+                    : "sign-in-button--enabled"
+                }`}
+                onClick={signInHandler}
+              >
+                <span>Sign in</span>
+              </span>
+            ) : (
+              <FontAwesomeIcon
+                icon={LoadingIcon}
+                size="lg"
+                spin
+                color="#ffd6c6"
+              ></FontAwesomeIcon>
+            )}
           </div>
         </div>
       </div>

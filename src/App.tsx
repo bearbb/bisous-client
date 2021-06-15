@@ -24,7 +24,7 @@ function App() {
           <Route path="/login" component={Login}></Route>
           <Route path="/" exact component={Feeds}></Route>
           <Route path="/message" exact component={Message} />
-          <Route path="/p" exact component={SinglePostPage} />
+          <Route path="/p/:postId" exact component={SinglePostPage} />
           <Route path="/user" exact component={UserDetail} />
           <Route path="/loading" exact component={LoadingScreen} />
         </Switch>

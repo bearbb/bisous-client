@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { SinglePost } from "pages/SinglePost/SinglePost";
 import { Logo } from "pages/Header/Logo";
 // import { Nav } from "pages/Header/Nav";
@@ -10,6 +11,8 @@ import postImg from "styles/images/wallpaper.jpg";
 import yuna from "styles/images/yuna.jpg";
 import yuna2 from "styles/images/yuna2.jpg";
 import { Share } from "./Share";
+import axiosInstance from "Utility/axios";
+import { getUserName, GetUserData } from "Utility/user";
 
 interface like {
   _id: string;
@@ -27,146 +30,6 @@ interface hashtag {
   _id: string;
   hashtag: string;
 }
-let testData = {
-  pictures: yuna2,
-  likes: [
-    {
-      _id: "60bd8b513991652526115c25",
-      username: "bearbbTest",
-    },
-  ],
-  likeCount: 1,
-  comments: [
-    {
-      _id: "60bd949a028faa5fb53bdbcc",
-      comment: "test comment 13",
-      author: {
-        username: "bearbbTest",
-        avatar: avatar,
-      },
-    },
-    {
-      _id: "60bd93f62703875b27ecda9a",
-      comment: "test comment 13",
-      author: {
-        username: "bearbbTest",
-        avatar: avatar,
-      },
-    },
-    {
-      _id: "60bd9397143109595edd7d71",
-      comment:
-        "test comment 12, make it longer to create word break, u know bout this shit right?",
-      author: {
-        username: "bearbbTest",
-        avatar: avatar,
-      },
-    },
-    {
-      _id: "60bd9397143109595edd7d71",
-      comment:
-        "test comment 13, make it longer to create word break, u know bout this shit right?",
-      author: {
-        username: "bearbbTest",
-        avatar: avatar,
-      },
-    },
-    {
-      _id: "60bd9397143109595edd7d71",
-      comment:
-        "test comment 13, make it longer to create word break, u know bout this shit right?",
-      author: {
-        username: "bearbbTest",
-        avatar: avatar,
-      },
-    },
-    {
-      _id: "60bd9397143109595edd7d71",
-      comment:
-        "test comment 13, make it longer to create word break, u know bout this shit right?",
-      author: {
-        username: "bearbbTest",
-        avatar: avatar,
-      },
-    },
-    {
-      _id: "60bd9397143109595edd7d71",
-      comment:
-        "test comment 13, make it longer to create word break, u know bout this shit right?",
-      author: {
-        username: "bearbbTest",
-        avatar: avatar,
-      },
-    },
-    {
-      _id: "60bd9397143109595edd7d71",
-      comment:
-        "test comment 13, make it longer to create word break, u know bout this shit right?",
-      author: {
-        username: "bearbbTest",
-        avatar: avatar,
-      },
-    },
-    {
-      _id: "60bd9397143109595edd7d71",
-      comment:
-        "test comment 13, make it longer to create word break, u know bout this shit right?",
-      author: {
-        username: "bearbbTest",
-        avatar: avatar,
-      },
-    },
-    {
-      _id: "60bd9397143109595edd7d71",
-      comment:
-        "test comment 13, make it longer to create word break, u know bout this shit right?",
-      author: {
-        username: "bearbbTest",
-        avatar: avatar,
-      },
-    },
-    {
-      _id: "60bd9397143109595edd7d71",
-      comment:
-        "test comment 13, make it longer to create word break, u know bout this shit right?",
-      author: {
-        username: "bearbbTest",
-        avatar: avatar,
-      },
-    },
-    {
-      _id: "60bd9397143109595edd7d71",
-      comment:
-        "test comment 13, make it longer to create word break, u know bout this shit right?",
-      author: {
-        username: "bearbbTest",
-        avatar: avatar,
-      },
-    },
-  ],
-  commentCount: 0,
-  caption: "This is a caption 1",
-  hashtags: [
-    {
-      _id: "607810b5ae4cce2b42afa28a",
-      hashtag: "Hash0",
-    },
-    {
-      _id: "607810b5ae4cce2b42afa28b",
-      hashtag: "Hash1",
-    },
-  ],
-  // _id: "607810b5ae4cce2b42afa28c",
-  author: {
-    _id: "607648ca929187328ba674d7",
-    username: "bearbb",
-    avatar: avatar,
-  },
-  createdAt: "2021-04-15T10:08:53.040Z",
-  // updatedAt: "2021-06-07T03:38:02.184Z",
-  // __v: 12,
-  // shareHandler
-};
 const friends = [
   {
     friendName: "UnUn",
@@ -249,27 +112,61 @@ const friends = [
     friendAvatar: avatar,
   },
 ];
-export interface PostData {
-  pictures: string;
-  likes: like[];
-  likeCount: number;
-  comments: comment[];
-  commentCount: number;
-  caption: string;
-  hashtags: hashtag[];
+interface SinglePostPageProps {}
+
+export interface CommentData {
+  _id: string;
+  comment: string;
+  author: {
+    username: string;
+    avatar?: any;
+  };
+}
+interface HashtagData {
+  _id: string;
+  hashtag: string;
+}
+interface LikeData {
+  _id: string;
+  username: string;
+}
+export interface GetPostData {
+  _v: string;
+  _id: string;
   author: {
     _id: string;
     username: string;
-    avatar: string;
   };
+  caption: string;
+  commentCount: number;
+  comments: CommentData[];
   createdAt: string;
-  // __id: string;
+  hashtags: HashtagData[];
+  likeCount: number;
+  likes: LikeData[];
+  pictures: string[];
+  updatedAt: string;
   shareOnClickHandler: () => void;
-  // shareHand
+  isLiked: boolean;
 }
-interface SinglePostPageProps {}
+interface Params {
+  postId: string;
+}
+const getPostData = async (postId: string): Promise<GetPostData> => {
+  let res: GetPostData;
+  try {
+    const resp = await axiosInstance.get(`/posts/${postId}`);
+    res = resp.data.post;
+  } catch (error) {
+    console.error(error);
+    res = error.response;
+  }
+  return res;
+};
 
 export const SinglePostPage: React.FC<SinglePostPageProps> = ({}) => {
+  const params: Params = useParams();
+  const [postData, setPostData] = useState<GetPostData>();
   const [toggleShare, setToggleShare] = useState(false);
   const shareOnClickHandler = () => {
     console.log("Clicked ted");
@@ -287,10 +184,25 @@ export const SinglePostPage: React.FC<SinglePostPageProps> = ({}) => {
     );
     return () => {};
   }, [toggleShare]);
-  let temp: PostData = {
-    ...testData,
-    shareOnClickHandler: shareOnClickHandler,
-  };
+  useEffect(() => {
+    (async () => {
+      let userData: GetUserData = await getUserName();
+      let res: GetPostData = await getPostData(params.postId);
+      let imgUrl = `https://application.swanoogie.me/api/images/${res.pictures[0]}`;
+      let likeIndex = res.likes.findIndex(
+        (e) => e.username === userData.username
+      );
+      if (likeIndex !== -1) {
+        res.isLiked = true;
+      } else {
+        res.isLiked = false;
+      }
+      res.pictures = [imgUrl];
+      res.shareOnClickHandler = shareOnClickHandler;
+      setPostData(res);
+      console.log(res);
+    })();
+  }, []);
   return (
     <div className="SinglePostPage">
       <div
@@ -311,7 +223,7 @@ export const SinglePostPage: React.FC<SinglePostPageProps> = ({}) => {
         </div>
       </div>
       <div className="SinglePostBody__container">
-        <SinglePost {...temp}></SinglePost>
+        {postData ? <SinglePost {...postData}></SinglePost> : null}
       </div>
     </div>
   );

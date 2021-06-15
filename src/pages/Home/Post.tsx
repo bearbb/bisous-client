@@ -106,7 +106,7 @@ export const Post: React.FC<PostProps> = ({
   const saveHandler = () => {};
   const moreHandler = () => {
     //pass in post id and navigate to that post
-    history.push("/p");
+    history.push(`/p/${postId}`);
   };
   useEffect(() => {
     //check if comment is empty
