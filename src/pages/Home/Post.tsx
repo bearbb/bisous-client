@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "styles/Feed__post.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -6,21 +6,23 @@ import {
   faComment,
   faBookmark,
 } from "@fortawesome/fontawesome-free-regular";
-import { faHeart as HeartSolid } from "@fortawesome/fontawesome-free-solid";
+import {
+  faHeart as HeartSolid,
+  faBookmark as SaveSolid,
+} from "@fortawesome/fontawesome-free-solid";
 import { faEllipsisH } from "@fortawesome/fontawesome-free-solid";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useHistory } from "react-router-dom";
-import axios from "axios";
+import { likePost, unlikePost } from "Utility/like";
+import { commentPost } from "Utility/comment";
 import LazyLoad from "react-lazyload";
-const axiosInstance = axios.create({
-  baseURL: "https://application.swanoogie.me/api",
-  withCredentials: true,
-});
+import { addPostToFavorite, deletePostFromFavorite } from "Utility/favorites";
 
 const HeartIcon = faHeart as IconProp;
 const HeartSolidIcon = HeartSolid as IconProp;
 const CommentIcon = faComment as IconProp;
 const FavoriteIcon = faBookmark as IconProp;
+const FavoriteSolidIcon = SaveSolid as IconProp;
 const MoreIcon = faEllipsisH as IconProp;
 export interface PostProps {
   postId: string;
@@ -36,26 +38,6 @@ export interface PostProps {
   isSaved: boolean;
 }
 
-const likePost = async (postId: string) => {
-  try {
-    let res = await axiosInstance.post(`/posts/${postId}/likes`);
-    console.log(res);
-    return res.data;
-  } catch (err) {
-    console.error(err);
-    return { error: err.response };
-  }
-};
-const unlikePost = async (postId: string) => {
-  try {
-    let res = await axiosInstance.delete(`/posts/${postId}/likes`);
-    console.log(res);
-    return res.data;
-  } catch (err) {
-    console.error(err);
-    return { error: err.response };
-  }
-};
 export const Post: React.FC<PostProps> = ({
   postId,
   authorAvatar,
@@ -70,6 +52,7 @@ export const Post: React.FC<PostProps> = ({
   isSaved,
 }) => {
   const history = useHistory();
+  const commentInputRef = useRef<HTMLTextAreaElement>(null);
   const [comment, setComment] = useState<string>("");
   const [commentIsEmpty, setCommentIsEmpty] = useState<boolean>(true);
   const [postIsLiked, setPostIsLiked] = useState<boolean>(isLiked);
@@ -78,17 +61,23 @@ export const Post: React.FC<PostProps> = ({
   const commentHandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(event.target.value.toString());
   };
-  const commentSubmit = () => {
-    //check empty
-    if (commentIsEmpty) {
-      //DO nothing
-    } else {
-      //TODO: send a post to api
+  const commentSubmit = async () => {
+    try {
+      //check empty
+      if (commentIsEmpty) {
+        //DO nothing
+      } else {
+        //TODO: send a post to api
+        let res = await commentPost(postId, comment);
+        console.log(res);
+        if (!res.error) {
+          commentInputRef.current!.value = "";
+          setComment("");
+        }
+      }
+    } catch (error) {
+      console.error(error);
     }
-    console.log(
-      `%cClicked`,
-      "background: #292d3e; color: #f07178; font-weight: bold"
-    );
   };
   //if already liked or shared or saved then on click => unlike,...
   const likeHandler = async () => {
@@ -103,7 +92,19 @@ export const Post: React.FC<PostProps> = ({
       setPostLikeCount(res.post.likeCount);
     }
   };
-  const saveHandler = () => {};
+  const saveHandler = async () => {
+    let res;
+    if (postIsSaved) {
+      res = await deletePostFromFavorite(postId);
+    } else {
+      res = await addPostToFavorite(postId);
+    }
+    if (res && !res.error) {
+      console.log(res);
+      setPostIsSaved(!postIsSaved);
+      //TODO: update saveCount after call api
+    }
+  };
   const moreHandler = () => {
     //pass in post id and navigate to that post
     history.push(`/p/${postId}`);
@@ -160,28 +161,26 @@ export const Post: React.FC<PostProps> = ({
           </span>
           <span className="postIn4__comment">{commentCount} comments</span>
         </div>
-        {/* <div className="postIn4">
-          <span
-            className={`postIn4__icon ${
-              isShared
-                ? "postIn4__shareIcon--shared postIn4__icon--active"
-                : "postIn4__shareIcon--notShared"
-            }`}
-          >
-            <FontAwesomeIcon icon={ShareIcon} size="lg" />
-          </span>
-          <span className="postIn4__share">{shareCount} shares</span>
-        </div> */}
         <div className="postIn4">
-          <span
-            className={`postIn4__icon ${
-              isSaved
-                ? "postIn4__saveIcon--saved postIn4__icon--active"
-                : "postIn4__saveIcon--notSaved"
-            }`}
-          >
-            <FontAwesomeIcon icon={FavoriteIcon} size="lg" />
-          </span>
+          {postIsSaved ? (
+            <span
+              onClick={() => {
+                saveHandler();
+              }}
+              className="postIn4__icon postIn4__saveIcon--saved postIn4__icon--active"
+            >
+              <FontAwesomeIcon icon={FavoriteSolidIcon} size="lg" />
+            </span>
+          ) : (
+            <span
+              onClick={() => {
+                saveHandler();
+              }}
+              className="postIn4__icon postIn4__saveIcon--notSaved"
+            >
+              <FontAwesomeIcon icon={FavoriteIcon} size="lg" />
+            </span>
+          )}
           <span className="postIn4__save">{saveCount} save</span>
         </div>
       </div>
@@ -193,6 +192,7 @@ export const Post: React.FC<PostProps> = ({
           <img src={userAvatar} alt="" className="postComment__avatar" />
         </LazyLoad>
         <textarea
+          ref={commentInputRef}
           className="postComment__input"
           placeholder="Add a comment..."
           autoComplete="off"

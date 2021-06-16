@@ -66,6 +66,7 @@
 }
 .postIn4__icon {
   margin-right: 5px;
+  cursor: pointer;
 }
 .postIn4__icon--active {
   color: #eb4d31;
@@ -79,7 +80,7 @@
 }
 
 .post__comment {
-  border-top: 1px solid rgba(47, 47, 47, 0.4);
+  border-top: 1px solid rgba(47, 47, 47, 0.2);
   display: flex;
   /* justify-content: space-between; */
   align-items: center;

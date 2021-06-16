@@ -8,6 +8,7 @@ import { Message } from "pages/Message/Message";
 import { SinglePostPage } from "pages/SinglePost/SinglePostPage";
 import { UserDetail } from "pages/UserDetail/UserDetail";
 import { LoadingScreen } from "pages/LoadingScreen/LoadingScreen";
+import { NewPost } from "pages/NewPost/NewPost";
 
 function App() {
   //first call an api to check if user have logged in or not, if not then navigate to login page
@@ -27,6 +28,7 @@ function App() {
           <Route path="/p/:postId" exact component={SinglePostPage} />
           <Route path="/user" exact component={UserDetail} />
           <Route path="/loading" exact component={LoadingScreen} />
+          <Route path="/upload" exact component={NewPost} />
         </Switch>
       </div>
     </Router>

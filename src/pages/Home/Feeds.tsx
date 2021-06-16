@@ -12,7 +12,9 @@ import { LoadingScreen } from "pages/LoadingScreen/LoadingScreen";
 import { useHistory } from "react-router-dom";
 import LazyLoad from "react-lazyload";
 import axiosInstance from "Utility/axios";
+import { getFavoriteList } from "Utility/favorites";
 import sleep from "Utility/sleep";
+import { NewPost } from "pages/NewPost/NewPost";
 interface GetUserData {
   username?: string;
   userId?: string;
@@ -98,13 +100,16 @@ interface PostDataWithAvatarAndInteractionStatus extends PostDataWithAvatar {
 }
 const getLikedNSavedStatus = async (
   data: PostDataWithAvatar[],
-  uData: GetUserData
+  uData: GetUserData,
+  favoriteList: string[]
 ): Promise<PostDataWithAvatarAndInteractionStatus[]> => {
   let returnData: PostDataWithAvatarAndInteractionStatus[] = [];
   returnData = data.map((d) => {
     let likeIndex = d.likes.findIndex((e) => e === uData.userId);
     let isLiked: boolean = likeIndex === -1 ? false : true;
-    return { ...d, isLiked, isSaved: false };
+    let saveIndex = favoriteList.findIndex((e) => e === d._id);
+    let isSaved: boolean = saveIndex === -1 ? false : true;
+    return { ...d, isLiked, isSaved };
   });
   return returnData;
 };
@@ -128,63 +133,74 @@ const renderPost = (
 ): React.ReactElement => {
   let render: React.ReactElement[] = [];
   if (data) {
-    data.forEach((post) => {
-      render.push(
-        <LazyLoad>
-          <Post
-            key={post._id}
-            authorAvatar={post.avatar}
-            postId={post._id}
-            authorName={post.author.username}
-            // postImg={post.pictures[0]}
-            postImg={`https://application.swanoogie.me/api/images/${post.pictures[0]}`}
-            likeCount={post.likeCount}
-            commentCount={post.commentCount}
-            saveCount={0}
-            caption={post.caption}
-            userAvatar={avatar}
-            isLiked={post.isLiked}
-            isSaved={post.isSaved}
-          ></Post>
-        </LazyLoad>
-      );
-    });
+    data
+      .slice(0)
+      .reverse()
+      .forEach((post) => {
+        render.push(
+          <LazyLoad>
+            <Post
+              key={post._id}
+              authorAvatar={post.avatar}
+              postId={post._id}
+              authorName={post.author.username}
+              // postImg={post.pictures[0]}
+              postImg={`https://application.swanoogie.me/api/images/${post.pictures[0]}`}
+              likeCount={post.likeCount}
+              commentCount={post.commentCount}
+              saveCount={0}
+              caption={post.caption}
+              userAvatar={avatar}
+              isLiked={post.isLiked}
+              isSaved={post.isSaved}
+            ></Post>
+          </LazyLoad>
+        );
+      });
   }
   return <div className="Posts__container">{render}</div>;
 };
 
 export const Feeds: React.FC<FeedsProps> = ({}) => {
+  let favoriteList: string[];
   const history = useHistory();
-  function responseAfterSeconds(bool: boolean): Promise<boolean> {
-    return new Promise((res) => {
-      setTimeout(() => {
-        res(bool);
-      }, 5555);
-    });
-  }
   const [isFetching, setIsFetching] = useState<boolean>(true);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [toggleNewPost, setToggleNewPost] = useState<boolean>(false);
+  const [fetchPostDataSignal, setFetchPostDataSignal] =
+    useState<boolean>(false);
   const [postsData, setPostsData] =
     useState<PostDataWithAvatarAndInteractionStatus[]>();
+  const FetchPostData = async () => {
+    let getUserNameRes = await getUserName();
+    if (getUserNameRes.error) {
+      setIsLoggedIn(false);
+    } else {
+      setIsLoggedIn(true);
+      favoriteList = await getFavoriteList();
+      let data = await getPostsData();
+      let data2 = await getAuthorsAvatar(data);
+      let data3 = await getLikedNSavedStatus(
+        data2,
+        getUserNameRes,
+        favoriteList
+      );
+      let data4 = await getImagesData(data3);
+      setPostsData(data4);
+      await sleep(300);
+    }
+    setIsFetching(false);
+  };
   useEffect(() => {
     console.log();
-    (async () => {
-      let getUserNameRes = await getUserName();
-      if (getUserNameRes.error) {
-        setIsLoggedIn(false);
-      } else {
-        setIsLoggedIn(true);
-        let data = await getPostsData();
-        let data2 = await getAuthorsAvatar(data);
-        let data3 = await getLikedNSavedStatus(data2, getUserNameRes);
-        let data4 = await getImagesData(data3);
-        setPostsData(data4);
-        console.log(data4);
-        await sleep(300);
-      }
-      setIsFetching(false);
-    })();
+    FetchPostData();
   }, []);
+  useEffect(() => {
+    if (fetchPostDataSignal) {
+      FetchPostData();
+      setFetchPostDataSignal(false);
+    }
+  }, [fetchPostDataSignal]);
   if (isFetching) {
     return <LoadingScreen></LoadingScreen>;
   } else {
@@ -192,15 +208,35 @@ export const Feeds: React.FC<FeedsProps> = ({}) => {
       history.push("/login");
     }
     return (
-      <div className="Feeds">
+      <div className={`Feeds ${toggleNewPost ? "Feeds--flex" : ""}`}>
+        <div
+          className={`Feed__overlay ${
+            toggleNewPost ? "Feed__overlay--enabled" : "Feed__overlay--disabled"
+          }`}
+          onClick={() => setToggleNewPost(!toggleNewPost)}
+        ></div>
+        {toggleNewPost ? (
+          <NewPost
+            toggleNewPost={() => setToggleNewPost(!toggleNewPost)}
+            fetchNewPostData={() => setFetchPostDataSignal(true)}
+          ></NewPost>
+        ) : null}
         <div className="feedsHeader__container">
           <div className="headerFlex__container">
             <Logo></Logo>
-            <SearchNNewPost></SearchNNewPost>
+            <SearchNNewPost
+              toggleNewPost={() => {
+                setToggleNewPost(!toggleNewPost);
+              }}
+            ></SearchNNewPost>
             <Utility></Utility>
           </div>
         </div>
-        <div className="feedBody__container">
+        <div
+          className={`feedBody__container ${
+            toggleNewPost ? "feedBody__container--overlayed" : ""
+          }`}
+        >
           <div className="leftSide__Nav--fixed">
             <div className="feedsLeftSideNav__container">
               <User

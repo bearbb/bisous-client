@@ -2,10 +2,23 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faPlus } from "@fortawesome/free-solid-svg-icons";
 
-interface SearchNNewPostProps {}
+interface SearchNNewPostProps {
+  toggleNewPost?: () => void;
+}
 
-export const SearchNNewPost: React.FC<SearchNNewPostProps> = ({}) => {
-  const newPostHandler = () => {};
+export const SearchNNewPost: React.FC<SearchNNewPostProps> = ({
+  toggleNewPost,
+}) => {
+  const newPostHandler = () => {
+    if (toggleNewPost) {
+      toggleNewPost();
+    } else {
+      console.log(
+        `%cCòn cái nịt `,
+        "background: #292d3e; color: #f07178; font-weight: bold"
+      );
+    }
+  };
   return (
     <div className="SearchNNewPost">
       <div className="searchNNewPost__container">
