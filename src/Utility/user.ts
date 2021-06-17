@@ -4,6 +4,7 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 export interface GetUserData {
+  success: boolean;
   username?: string;
   userId?: string;
   error?: {
@@ -11,14 +12,21 @@ export interface GetUserData {
   };
 }
 const getUserName = async (): Promise<GetUserData> => {
-  let userData: GetUserData = {};
+  let userData: GetUserData = { success: false };
   try {
     let res = await axiosInstance.get("/users");
-    userData = { username: res.data.username, userId: res.data.userId };
+    userData = {
+      success: res.data.success,
+      username: res.data.username,
+      userId: res.data.userId,
+    };
     return userData;
   } catch (error) {
     console.error(error.response);
-    userData = { error: { errorMsg: error.response.data.message } };
+    userData = {
+      success: error.response.data.success,
+      error: { errorMsg: error.response.data.message },
+    };
     return userData;
   }
 };

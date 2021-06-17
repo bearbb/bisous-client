@@ -16,8 +16,14 @@ import { getFavoriteList } from "Utility/favorites";
 import sleep from "Utility/sleep";
 import { NewPost } from "pages/NewPost/NewPost";
 interface GetUserData {
-  username?: string;
-  userId?: string;
+  // username?: string;
+  // userId?: string;
+  userData?: {
+    username: string;
+    userId: string;
+    followerCount: number;
+    followingCount: number;
+  };
   error?: {
     errorMsg: string;
   };
@@ -50,15 +56,23 @@ interface PostData {
   // avatar?: string;
 }
 const getUserName = async (): Promise<GetUserData> => {
-  let userData: GetUserData = {};
+  let getUserData: GetUserData = {};
   try {
     let res = await axiosInstance.get("/users");
-    userData = { username: res.data.username, userId: res.data.userId };
-    return userData;
+    let followRes = await axiosInstance.get("/follows");
+    getUserData = {
+      userData: {
+        username: res.data.username,
+        userId: res.data.userId,
+        followerCount: followRes.data.followDoc.followerCount,
+        followingCount: followRes.data.followDoc.followingCount,
+      },
+    };
+    return getUserData;
   } catch (error) {
     console.error(error.response);
-    userData = { error: { errorMsg: error.response.data.message } };
-    return userData;
+    getUserData = { error: { errorMsg: error.response.data.message } };
+    return getUserData;
   }
 };
 
@@ -105,7 +119,7 @@ const getLikedNSavedStatus = async (
 ): Promise<PostDataWithAvatarAndInteractionStatus[]> => {
   let returnData: PostDataWithAvatarAndInteractionStatus[] = [];
   returnData = data.map((d) => {
-    let likeIndex = d.likes.findIndex((e) => e === uData.userId);
+    let likeIndex = d.likes.findIndex((e) => e === uData.userData?.userId);
     let isLiked: boolean = likeIndex === -1 ? false : true;
     let saveIndex = favoriteList.findIndex((e) => e === d._id);
     let isSaved: boolean = saveIndex === -1 ? false : true;
@@ -164,6 +178,7 @@ const renderPost = (
 export const Feeds: React.FC<FeedsProps> = ({}) => {
   let favoriteList: string[];
   const history = useHistory();
+  const [userDetailData, setUserDetailData] = useState<GetUserData>();
   const [isFetching, setIsFetching] = useState<boolean>(true);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [toggleNewPost, setToggleNewPost] = useState<boolean>(false);
@@ -176,6 +191,7 @@ export const Feeds: React.FC<FeedsProps> = ({}) => {
     if (getUserNameRes.error) {
       setIsLoggedIn(false);
     } else {
+      setUserDetailData(getUserNameRes);
       setIsLoggedIn(true);
       favoriteList = await getFavoriteList();
       let data = await getPostsData();
@@ -204,6 +220,7 @@ export const Feeds: React.FC<FeedsProps> = ({}) => {
   if (isFetching) {
     return <LoadingScreen></LoadingScreen>;
   } else {
+    console.log(isLoggedIn);
     if (!isLoggedIn) {
       history.push("/login");
     }
@@ -241,11 +258,11 @@ export const Feeds: React.FC<FeedsProps> = ({}) => {
             <div className="feedsLeftSideNav__container">
               <User
                 userAvatar={avatar}
-                userName="Bear BB"
-                name="Hieu Nguyen"
-                postCount={30}
-                followerCount={40}
-                followingCount={499}
+                userName={userDetailData!.userData!.username}
+                name="displayName"
+                postCount={69}
+                followerCount={userDetailData!.userData!.followerCount}
+                followingCount={userDetailData!.userData!.followingCount}
               ></User>
               <Nav></Nav>
             </div>

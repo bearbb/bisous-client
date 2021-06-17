@@ -6,7 +6,7 @@
 }
 .SinglePostBody__container {
   padding-top: 73px;
-  height: 100%;
+  height: calc(100% - 93px);
   padding-bottom: 20px;
   display: flex;
   justify-content: center;

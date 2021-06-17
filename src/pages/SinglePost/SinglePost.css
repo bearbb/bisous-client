@@ -122,10 +122,9 @@
 /* Add new comment section */
 .spNewComment__container {
   width: 100%;
-  padding: 16px;
 }
 .spNewComment__inputContainer {
-  width: 100%;
+  padding: 16px;
   display: flex;
   align-items: center;
 }

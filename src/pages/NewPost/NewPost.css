@@ -8,7 +8,10 @@
 .Feeds--flex {
   display: flex;
   justify-content: center;
-  padding-top: 23px;
+  /* padding-top: 23px; */
+}
+.feedBody__container--overlayed {
+  width: 100%;
 }
 .Feed__overlay--enabled {
   top: 0;
@@ -17,7 +20,7 @@
   height: 100%;
   width: 100%;
   background-color: rgba(0, 0, 0, 0.65);
-  z-index: 100;
+  z-index: 4001;
 }
 .Feed__overlay--disabled {
   display: none;
@@ -28,11 +31,13 @@
   position: fixed;
   display: flex;
   justify-content: center;
-  padding-top: 10px;
+  /* padding-top: 73px; */
+  /* margin-top: 73px; */
+  top: 73px;
   align-items: flex-start;
   /* padding-left: 35%;
   padding-right: 35%; */
-  z-index: 1112;
+  z-index: 4002;
 }
 .NP__container {
   width: 100%;

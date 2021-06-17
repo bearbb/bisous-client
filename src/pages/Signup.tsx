@@ -97,9 +97,13 @@ export const Signup: React.FC<SignupProps> = ({}) => {
       //clear both password field
       setIsFetching(false);
       setPassword("");
-      passwordInputRef.current!.value = "";
       setRePassword("");
-      rePasswordInputRef.current!.value = "";
+      if (rePasswordInputRef.current && passwordInputRef.current) {
+        rePasswordInputRef.current.value = "";
+        passwordInputRef.current.value = "";
+      }
+      // rePasswordInputRef.current!.value = "";
+      // passwordInputRef.current.value = "";
     } else {
       console.log(
         `%cNhấn nhấn cái bím`,
