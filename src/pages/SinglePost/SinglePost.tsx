@@ -143,7 +143,7 @@ export const SinglePost: React.FC<GetPostData> = ({
           <Comment
             avatar={avatar}
             content={comment.comment}
-            username={author.username}
+            username={comment.author.username}
           ></Comment>
         );
       });
