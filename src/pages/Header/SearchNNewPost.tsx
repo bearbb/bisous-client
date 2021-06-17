@@ -13,10 +13,10 @@ export const SearchNNewPost: React.FC<SearchNNewPostProps> = ({
     if (toggleNewPost) {
       toggleNewPost();
     } else {
-      console.log(
-        `%cCòn cái nịt `,
-        "background: #292d3e; color: #f07178; font-weight: bold"
-      );
+      // console.log(
+      //   `%cCòn cái nịt `,
+      //   "background: #292d3e; color: #f07178; font-weight: bold"
+      // );
     }
   };
   return (

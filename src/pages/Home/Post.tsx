@@ -69,14 +69,14 @@ export const Post: React.FC<PostProps> = ({
       } else {
         //TODO: send a post to api
         let res = await commentPost(postId, comment);
-        console.log(res);
+        // console.log(res);
         if (!res.error) {
           commentInputRef.current!.value = "";
           setComment("");
         }
       }
     } catch (error) {
-      console.error(error);
+      // console.error(error);
     }
   };
   //if already liked or shared or saved then on click => unlike,...
@@ -100,7 +100,7 @@ export const Post: React.FC<PostProps> = ({
       res = await addPostToFavorite(postId);
     }
     if (res && !res.error) {
-      console.log(res);
+      // console.log(res);
       setPostIsSaved(!postIsSaved);
       //TODO: update saveCount after call api
     }

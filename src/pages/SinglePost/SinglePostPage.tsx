@@ -158,7 +158,7 @@ const getPostData = async (postId: string): Promise<GetPostData> => {
     const resp = await axiosInstance.get(`/posts/${postId}`);
     res = resp.data.post;
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res = error.response;
   }
   return res;
@@ -169,7 +169,7 @@ export const SinglePostPage: React.FC<SinglePostPageProps> = ({}) => {
   const [postData, setPostData] = useState<GetPostData>();
   const [toggleShare, setToggleShare] = useState(false);
   const shareOnClickHandler = () => {
-    console.log("Clicked ted");
+    // console.log("Clicked ted");
     //toggle share on off
     setToggleShare(!toggleShare);
   };
@@ -177,11 +177,11 @@ export const SinglePostPage: React.FC<SinglePostPageProps> = ({}) => {
     setToggleShare(!toggleShare);
   };
   useEffect(() => {
-    console.log(toggleShare);
-    console.log(
-      `%cClicked`,
-      "background: #292d3e; color: #f07178; font-weight: bold"
-    );
+    // console.log(toggleShare);
+    // console.log(
+    //   `%cClicked`,
+    //   "background: #292d3e; color: #f07178; font-weight: bold"
+    // );
     return () => {};
   }, [toggleShare]);
   useEffect(() => {
@@ -200,7 +200,7 @@ export const SinglePostPage: React.FC<SinglePostPageProps> = ({}) => {
       res.pictures = [imgUrl];
       res.shareOnClickHandler = shareOnClickHandler;
       setPostData(res);
-      console.log(res);
+      // console.log(res);
     })();
   }, []);
   return (

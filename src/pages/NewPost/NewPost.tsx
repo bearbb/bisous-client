@@ -97,7 +97,7 @@ export const NewPost: React.FC<NewPostProps> = ({
       if (data) {
         imageData.append("imageFile", data);
       }
-      console.log(imageData);
+      // console.log(imageData);
       let resp = await axiosInstance.post("/images", imageData);
       let imgId = resp.data.imageId;
       if (clearToPost) {
@@ -107,7 +107,7 @@ export const NewPost: React.FC<NewPostProps> = ({
           hashtags: ["hashtag-not-available-for-now"],
         };
         let postResp = await axiosInstance.post("/posts", postData);
-        console.log(postResp);
+        // console.log(postResp);
         captionInputRef.current!.value = "";
         clearImgBlob();
         toggleNewPost();

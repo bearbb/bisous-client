@@ -96,10 +96,10 @@ export const SinglePost: React.FC<GetPostData> = ({
         setCommentsList(res.post.comments);
         setNewComment("");
         newCommentInputRef.current!.value = "";
-        console.log(res);
+        // console.log(res);
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   };
 
@@ -115,7 +115,7 @@ export const SinglePost: React.FC<GetPostData> = ({
       setPostIsLiked(!postIsLiked);
       setPostLikeCount(likeRes.post.likeCount);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
     }
   };
   const doubleClickLikeHandler = async () => {

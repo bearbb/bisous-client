@@ -29,9 +29,10 @@ function App() {
           <Route path="/login" component={Login} />
           <Route path="/signup" component={Signup} />
           <Route path="/p/:postId" component={SinglePostPage} />
+          <Route path="/user" component={UserDetail} exact />
+          <Route path="/message" component={Message} exact />
           <AuthenticatedRoute path="/" Component={Feeds} />
           {/* <AuthenticatedRoute path="/p/:postId" Component={SinglePostPage} /> */}
-          <AuthenticatedRoute path="/user" Component={UserDetail} />
           {/* <Route path="/signup" exact component={Signup}></Route>
           <Route path="/login" exact component={Login}></Route>
           <Route

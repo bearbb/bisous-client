@@ -70,7 +70,7 @@ const getUserName = async (): Promise<GetUserData> => {
     };
     return getUserData;
   } catch (error) {
-    console.error(error.response);
+    // console.error(error.response);
     getUserData = { error: { errorMsg: error.response.data.message } };
     return getUserData;
   }
@@ -87,7 +87,7 @@ const getPostsData = async (): Promise<PostData[]> => {
     postsData = res.data;
     return postsData;
   } catch (err) {
-    console.error(err.response);
+    // console.error(err.response);
   }
   return postsData;
 };
@@ -152,7 +152,7 @@ const renderPost = (
       .reverse()
       .forEach((post) => {
         render.push(
-          <LazyLoad>
+          <LazyLoad key={post._id}>
             <Post
               key={post._id}
               authorAvatar={post.avatar}
@@ -208,7 +208,7 @@ export const Feeds: React.FC<FeedsProps> = ({}) => {
     setIsFetching(false);
   };
   useEffect(() => {
-    console.log();
+    // console.log();
     FetchPostData();
   }, []);
   useEffect(() => {
@@ -220,7 +220,7 @@ export const Feeds: React.FC<FeedsProps> = ({}) => {
   if (isFetching) {
     return <LoadingScreen></LoadingScreen>;
   } else {
-    console.log(isLoggedIn);
+    // console.log(isLoggedIn);
     if (!isLoggedIn) {
       history.push("/login");
     }

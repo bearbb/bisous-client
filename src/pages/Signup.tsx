@@ -89,9 +89,9 @@ export const Signup: React.FC<SignupProps> = ({}) => {
       });
       if (signupRes.error) {
         setSignupErr(signupRes.error.errorMsg);
-        console.log(signupErr);
+        // console.log(signupErr);
       } else {
-        console.log(signupRes.successMsg);
+        // console.log(signupRes.successMsg);
         navToLogin();
       }
       //clear both password field
@@ -105,10 +105,10 @@ export const Signup: React.FC<SignupProps> = ({}) => {
       // rePasswordInputRef.current!.value = "";
       // passwordInputRef.current.value = "";
     } else {
-      console.log(
-        `%cNhấn nhấn cái bím`,
-        "background: #292d3e; color: #f07178; font-weight: bold"
-      );
+      // console.log(
+      //   `%cNhấn nhấn cái bím`,
+      //   "background: #292d3e; color: #f07178; font-weight: bold"
+      // );
     }
   };
   return (

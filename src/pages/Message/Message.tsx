@@ -238,9 +238,9 @@ export const Message: React.FC<MessageProps> = ({}) => {
   const currentFriendHandler = (data: any) => {
     //delete pre active class on pre currentFriend
     let preDoc = document.getElementsByClassName(currentFriend.friendId)[0];
-    console.log(preDoc);
+    // console.log(preDoc);
     preDoc.classList.remove("currentFriend__container--active");
-    console.log(preDoc);
+    // console.log(preDoc);
     //set current friend on that friend
     setCurrentFriend(data);
     //add currentFriend__container--active to that html element
@@ -248,10 +248,10 @@ export const Message: React.FC<MessageProps> = ({}) => {
     doc.classList.add("currentFriend__container--active");
   };
   const nullOnclickHandler = () => {
-    console.log(
-      `%cDO NOTHING`,
-      "background: #292d3e; color: #f07178; font-weight: bold"
-    );
+    // console.log(
+    //   `%cDO NOTHING`,
+    //   "background: #292d3e; color: #f07178; font-weight: bold"
+    // );
   };
   const [currentUser, setCurrentUser] = useState<string>("bearbb");
   const [currentChatLog, setCurrentChatLog] =
@@ -280,10 +280,10 @@ export const Message: React.FC<MessageProps> = ({}) => {
   };
   const newMessageSubmitHandler = () => {
     //TODO: Scroll to last message when submit a message to server
-    console.log(
-      `%cClicked`,
-      "background: #292d3e; color: #f07178; font-weight: bold"
-    );
+    // console.log(
+    //   `%cClicked`,
+    //   "background: #292d3e; color: #f07178; font-weight: bold"
+    // );
   };
   const lastMessageRef = useRef<HTMLLIElement | null>(null);
   const renderChatLog = (data: MessageData[]): React.ReactElement => {

@@ -6,20 +6,20 @@ const axiosInstance = axios.create({
 const likePost = async (postId: string) => {
   try {
     let res = await axiosInstance.post(`/posts/${postId}/likes`);
-    console.log(res);
+    // console.log(res);
     return res.data;
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     return { error: err.response };
   }
 };
 const unlikePost = async (postId: string) => {
   try {
     let res = await axiosInstance.delete(`/posts/${postId}/likes`);
-    console.log(res);
+    // console.log(res);
     return res.data;
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     return { error: err.response };
   }
 };

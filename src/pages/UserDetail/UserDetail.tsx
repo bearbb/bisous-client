@@ -73,10 +73,10 @@ let postsData: PostData[] = [
 export const UserDetail: React.FC<UserDetailProps> = ({}) => {
   const [postId, setPostId] = useState<string>("");
   useEffect(() => {
-    console.log(
-      `%cPost id is: ${postId}`,
-      "background: #292d3e; color: #f07178; font-weight: bold"
-    );
+    // console.log(
+    //   `%cPost id is: ${postId}`,
+    //   "background: #292d3e; color: #f07178; font-weight: bold"
+    // );
     return () => {};
   }, [postId]);
   const renderPostPreview = (data: PostData[]): React.ReactElement => {

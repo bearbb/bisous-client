@@ -22,9 +22,9 @@ export const AuthenticatedRoute: React.FC<AuthenticatedRouteProps> = ({
     try {
       setIsFetching(true);
       let userRes = await getUserName();
-      console.log(userRes);
+      // console.log(userRes);
       setIsLoggedIn(userRes.success);
-      console.log(isLoggedIn);
+      // console.log(isLoggedIn);
       setIsFetching(false);
     } catch (err) {
       alert(err);
@@ -35,7 +35,7 @@ export const AuthenticatedRoute: React.FC<AuthenticatedRouteProps> = ({
       await onLoad();
     })();
   }, []);
-  console.log(isLoggedIn);
+  // console.log(isLoggedIn);
   if (isFetching) {
     return <LoadingScreen></LoadingScreen>;
   } else {

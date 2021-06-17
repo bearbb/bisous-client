@@ -10,7 +10,7 @@ export const Preload: React.FC<PreloadProps> = ({}) => {
     (async () => {
       setIsFetching(true);
       let userRes = await getUserName();
-      console.log(userRes.error !== undefined);
+      // console.log(userRes.error !== undefined);
       setIsFetching(false);
     })();
   }, []);
