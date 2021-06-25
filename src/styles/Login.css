@@ -65,7 +65,7 @@ body,
   gap: 8px;
 }
 .credential-input-label-container {
-  font-size: 0.7rem;
+  font-size: 1rem;
   color: #898989;
   display: flex;
   justify-content: flex-start;
@@ -96,7 +96,7 @@ body,
 .other-method-sign-in > span {
   padding: 0;
   box-shadow: none;
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-weight: 520;
   color: #fffbfc;
   display: flex;

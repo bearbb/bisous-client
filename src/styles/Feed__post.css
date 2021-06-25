@@ -94,10 +94,7 @@
 .postComment__input {
   margin-top: 10px;
   margin-right: 20px;
-  /* flex: 1 1 80%; */
   border: none;
-  /* box-sizing: border-box; */
-  /* overflow: auto; */
   word-break: break-all;
   resize: none;
   height: 20px;
@@ -106,6 +103,11 @@
   display: flex;
   flex-grow: 1;
   font-family: inherit;
+  font-size: 1rem;
+  overflow-y: auto;
+}
+.postComment__input::-webkit-scrollbar {
+  display: none;
 }
 /* .postComment__input :focus {
   outline: none;

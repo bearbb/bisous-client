@@ -70,13 +70,13 @@ export const Utility: React.FC<UtilityProps> = ({}) => {
           }}
         >
           <span className="logout__button">
-            <FontAwesomeIcon icon={LogoutIcon} size="lg"></FontAwesomeIcon>
+            <FontAwesomeIcon icon={LogoutIcon}></FontAwesomeIcon>
           </span>
           <span className="logout__description"> Logout</span>
         </div>
         <div className="setting__container">
           <span className="setting__button">
-            <FontAwesomeIcon icon={SettingIcon} size="lg"></FontAwesomeIcon>
+            <FontAwesomeIcon icon={SettingIcon}></FontAwesomeIcon>
           </span>
           <span className="setting__description"> Setting</span>
         </div>

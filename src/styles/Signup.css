@@ -44,6 +44,12 @@ body,
 #header-field:active {
   text-decoration: none;
 }
+#header-field > a > br {
+  /* height: 0; */
+  /* line-height: 150%; */
+  display: block;
+  margin: 10px 0;
+}
 #sign-up-field {
   flex: 1 1 90%;
   background-image: url(./images/login-bg.webp);
@@ -72,12 +78,12 @@ body,
   flex-flow: column;
   gap: 8px;
 }
-.credential-input-label-container {
+/* .credential-input-label-container {
   display: flex;
   justify-content: flex-start;
   font-size: 0.7rem;
   color: #898989;
-}
+} */
 .forgot-password-container {
   display: flex;
   justify-content: space-between;
@@ -85,13 +91,13 @@ body,
 .forgot-password-container > a {
   text-decoration: none;
 }
-.credential-input > input {
+/* .credential-input > input {
   border: none;
   padding-left: 25px;
   font-size: 1.1rem;
   font-weight: 450;
   box-sizing: border-box;
-}
+} */
 .password__input--red {
   border: solid rgba(251, 27, 76, 0.87) 2px !important;
 }

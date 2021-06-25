@@ -12,6 +12,9 @@
   /* border: 4px solid chocolate; */
   border-radius: 50%;
 }
+.userInformation__avatar:hover {
+  cursor: pointer;
+}
 .userInformation__description {
   display: flex;
   flex-flow: column;
