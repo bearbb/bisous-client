@@ -227,7 +227,11 @@ export const UserDetail: React.FC<UserDetailProps> = ({}) => {
           </div>
         </div>
         <div className="userPost__container">
-          <h2 className="userPost__descriptionHeader">POSTS</h2>
+          <div className="up__suContainer">
+            <div className="userPost__descriptionContainer">
+              <span className="userPost__descriptionHeader">POSTS</span>
+            </div>
+          </div>
           <div className="PostPreview__suContainer">
             {postsData === null ? (
               <span>Loading</span>

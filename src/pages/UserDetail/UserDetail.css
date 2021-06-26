@@ -45,7 +45,7 @@
 }
 .userIn4__username {
   font-weight: 600;
-  font-size: 2.2rem;
+  font-size: 1.7rem;
 }
 
 .userIn4Count__container {
@@ -62,9 +62,19 @@
   /* height: 100%; */
   width: 100%;
 }
+.up__suContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.userPost__descriptionContainer {
+  width: fit-content;
+  padding: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 1);
+}
 .userPost__descriptionHeader {
-  /* text-align: left; */
-  /* margin-left: 20px; */
+  font-size: 1.2rem;
+  width: auto;
 }
 
 .ppImg__container {
