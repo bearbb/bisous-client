@@ -18,6 +18,7 @@ import { NewPost } from "pages/NewPost/NewPost";
 import { getUserName, GetUserData } from "Utility/user";
 import { Preload } from "pages/Preload";
 import { AuthenticatedRoute } from "pages/AuthenticatedRoute";
+import { Socket } from "pages/Message/Socket";
 
 function App() {
   //first call an api to check if user have logged in or not, if not then navigate to login page
@@ -29,8 +30,9 @@ function App() {
           <Route path="/login" component={Login} />
           <Route path="/signup" component={Signup} />
           <Route path="/p/:postId" component={SinglePostPage} />
-          <Route path="/user" component={UserDetail} exact />
+          <Route path="/user/:userId" component={UserDetail} exact />
           <Route path="/message" component={Message} exact />
+          <Route path="/socket/:uid" component={Socket} />
           <AuthenticatedRoute path="/" Component={Feeds} />
           {/* <AuthenticatedRoute path="/p/:postId" Component={SinglePostPage} /> */}
           {/* <Route path="/signup" exact component={Signup}></Route>

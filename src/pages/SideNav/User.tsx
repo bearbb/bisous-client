@@ -10,6 +10,7 @@ interface UserProps {
   postCount: number;
   followerCount: number;
   followingCount: number;
+  userId: string;
 }
 
 export const User: React.FC<UserProps> = ({
@@ -19,10 +20,11 @@ export const User: React.FC<UserProps> = ({
   postCount,
   followerCount,
   followingCount,
+  userId,
 }) => {
   const userNameHandler = () => {};
   const navToUserPage = () => {
-    history.push("/user");
+    history.push(`/user/${userId}`);
   };
   const history = useHistory();
   return (

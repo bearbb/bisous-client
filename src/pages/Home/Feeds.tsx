@@ -23,6 +23,7 @@ interface GetUserData {
     userId: string;
     followerCount: number;
     followingCount: number;
+    postCount: number;
   };
   error?: {
     errorMsg: string;
@@ -64,6 +65,7 @@ const getUserName = async (): Promise<GetUserData> => {
       userData: {
         username: res.data.username,
         userId: res.data.userId,
+        postCount: res.data.postCount,
         followerCount: followRes.data.followDoc.followerCount,
         followingCount: followRes.data.followDoc.followingCount,
       },
@@ -158,7 +160,6 @@ const renderPost = (
               authorAvatar={post.avatar}
               postId={post._id}
               authorName={post.author.username}
-              // postImg={post.pictures[0]}
               postImg={`https://application.swanoogie.me/api/images/${post.pictures[0]}`}
               likeCount={post.likeCount}
               commentCount={post.commentCount}
@@ -260,9 +261,10 @@ export const Feeds: React.FC<FeedsProps> = ({}) => {
                 userAvatar={avatar}
                 userName={userDetailData!.userData!.username}
                 name="displayName"
-                postCount={69}
+                postCount={userDetailData!.userData!.postCount}
                 followerCount={userDetailData!.userData!.followerCount}
                 followingCount={userDetailData!.userData!.followingCount}
+                userId={userDetailData!.userData!.userId}
               ></User>
               <Nav></Nav>
             </div>

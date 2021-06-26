@@ -162,7 +162,7 @@ body,
 /* TODO: add onClick style (:active) stuff =)) */
 
 .login__error {
-  font-size: 0.5rem;
+  font-size: 0.9rem;
   text-align: center;
   color: rgba(251, 27, 76, 0.87);
 }

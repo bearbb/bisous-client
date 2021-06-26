@@ -80,7 +80,10 @@
   display: flex;
   flex-shrink: 0;
   width: 100%;
-  justify-content: space-between;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 15px;
+  flex-wrap: wrap;
 }
 .PP__hoverContainer {
   width: auto;

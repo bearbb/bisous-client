@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Logo } from "pages/Header/Logo";
-import { Nav } from "pages/Header/Nav";
 import { SearchNNewPost } from "pages/Header/SearchNNewPost";
-import { User } from "pages/SideNav/User";
 import { Utility } from "pages/Header/Utility";
 import { Chat } from "pages/Message/Chat";
 import "styles/Message.css";
 import avatar from "styles/images/avatar.webp";
+import SocketIOClient from "socket.io-client";
 
 import { FriendInformation } from "pages/Message/FriendInformation";
 
@@ -280,10 +279,6 @@ export const Message: React.FC<MessageProps> = ({}) => {
   };
   const newMessageSubmitHandler = () => {
     //TODO: Scroll to last message when submit a message to server
-    // console.log(
-    //   `%cClicked`,
-    //   "background: #292d3e; color: #f07178; font-weight: bold"
-    // );
   };
   const lastMessageRef = useRef<HTMLLIElement | null>(null);
   const renderChatLog = (data: MessageData[]): React.ReactElement => {
@@ -328,6 +323,10 @@ export const Message: React.FC<MessageProps> = ({}) => {
   const scrollToLastMessage = () => {
     lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+  useEffect(() => {
+    // const socket = SocketIOClient("https://application.swanoogie.me");
+    return () => {};
+  }, []);
   useEffect(() => {
     if (newMessage == "") {
       setNewMessageIsEmpty(true);

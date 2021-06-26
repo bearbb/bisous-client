@@ -134,7 +134,7 @@ body,
   min-height: 44px;
   width: 100%;
   border: 1px solid rgba(47, 47, 47, 0.5);
-  border-radius: 22px;
+  border-radius: 20px;
   padding: 0 15px 0 15px;
   display: flex;
   justify-content: center;
@@ -145,9 +145,12 @@ body,
   resize: none;
   width: 100%;
   border: none;
-  /* background-color: #f6f5f4; */
   height: 22px;
   font-family: inherit;
+  font-size: 1rem;
+}
+.newMessage__textarea::-webkit-scrollbar {
+  display: none;
 }
 .newMessage__container > textarea:focus {
   outline: none;
