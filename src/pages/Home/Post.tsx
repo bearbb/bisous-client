@@ -36,6 +36,7 @@ export interface PostProps {
   userAvatar: string;
   isLiked: boolean;
   isSaved: boolean;
+  authorId: string;
 }
 
 export const Post: React.FC<PostProps> = ({
@@ -50,6 +51,7 @@ export const Post: React.FC<PostProps> = ({
   userAvatar,
   isLiked,
   isSaved,
+  authorId,
 }) => {
   const history = useHistory();
   const commentInputRef = useRef<HTMLTextAreaElement>(null);
@@ -109,6 +111,9 @@ export const Post: React.FC<PostProps> = ({
     //pass in post id and navigate to that post
     history.push(`/p/${postId}`);
   };
+  const navToUserPage = () => {
+    history.push(`user/${authorId}`);
+  };
   useEffect(() => {
     //check if comment is empty
     if (comment == "") {
@@ -122,9 +127,23 @@ export const Post: React.FC<PostProps> = ({
       <div className="post__header">
         <div className="post__user">
           <LazyLoad>
-            <img src={authorAvatar} alt="" className="postUser__avatar" />
+            <img
+              src={authorAvatar}
+              alt=""
+              className="postUser__avatar"
+              onClick={() => {
+                navToUserPage();
+              }}
+            />
           </LazyLoad>
-          <span className="postUser__userName">{authorName}</span>
+          <span
+            className="postUser__userName"
+            onClick={() => {
+              navToUserPage();
+            }}
+          >
+            {authorName}
+          </span>
         </div>
         <div className="postMore__container">
           <span className="post__more" onClick={moreHandler}>

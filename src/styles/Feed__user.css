@@ -20,7 +20,11 @@
   flex-flow: column;
 }
 .userInformation__userName {
-  font-weight: bold;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+.userInformation__userName:hover {
+  text-decoration: underline;
 }
 .userInformation__userName:hover {
   cursor: pointer;

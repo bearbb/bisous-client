@@ -33,9 +33,15 @@
 }
 .postUser__userName {
   font-weight: bold;
+  cursor: pointer;
+}
+.postUser__userName:hover {
+  text-decoration: underline;
+  /* padding-bottom: 3px; */
+  /* border-bottom: 1px solid black; */
 }
 .postUser__avatar {
-  width: 50px;
+  width: 40px;
   margin-right: 10px;
 }
 .postMore__container {
@@ -109,9 +115,6 @@
 .postComment__input::-webkit-scrollbar {
   display: none;
 }
-/* .postComment__input :focus {
-  outline: none;
-} */
 .post__comment > textarea:focus {
   outline: none;
 }

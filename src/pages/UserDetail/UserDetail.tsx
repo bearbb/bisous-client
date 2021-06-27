@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Logo } from "pages/Header/Logo";
 import { SearchNNewPost } from "pages/Header/SearchNNewPost";
 import { Utility } from "pages/Header/Utility";
@@ -9,6 +9,14 @@ import axiosInstance from "Utility/axios";
 import { useParams } from "react-router";
 import { useHistory } from "react-router-dom";
 import LazyLoad from "react-lazyload";
+import sleep from "Utility/sleep";
+import { useUserContext } from "Contexts/UserContext";
+import { useFollowContext } from "Contexts/FollowContext";
+import { faUserCheck } from "@fortawesome/fontawesome-free-solid";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { followUser, unFollowUser } from "Utility/follow";
+const FollowedIcon = faUserCheck as IconProp;
 interface UserDetailProps {}
 
 interface UserInformationData {
@@ -39,10 +47,11 @@ interface GetFollowData {
 }
 interface GetUserData {
   username: string;
+  userId: string;
 }
 const getUserData = async (userId: string): Promise<GetUserData> => {
   let res = await axiosInstance.get(`/users/${userId}`);
-  return { username: res.data.userDoc.username };
+  return { username: res.data.userDoc.username, userId: userId };
 };
 const getUserPostList = async (userId: string): Promise<GetPostListData> => {
   let postListData: GetPostListData = {
@@ -92,6 +101,7 @@ const getPostsFromPostList = async (
 interface Params {
   userId: string;
 }
+//TODO: No need to call follows and users api any more =)) remember to remove it
 const getAllData = async (userId: string) => {
   let [data0, data1, data3] = await Promise.all([
     getUserPostList(userId),
@@ -100,6 +110,11 @@ const getAllData = async (userId: string) => {
   ]);
   let data2 = await getPostsFromPostList(data0.posts);
   return { data0, data1, data2, data3 };
+};
+const isOwnPage = (ownId: string, paramsUserId: string) => {
+  console.log("ownId: ", ownId);
+  console.log("paramsID: ", paramsUserId);
+  return ownId === paramsUserId;
 };
 export const UserDetail: React.FC<UserDetailProps> = ({}) => {
   const history = useHistory();
@@ -111,15 +126,37 @@ export const UserDetail: React.FC<UserDetailProps> = ({}) => {
     posts: [],
   });
   const [followData, setFollowData] = useState<GetFollowData>({
-    follower: [],
-    followingCount: 0,
+    follower: [""],
     followerCount: 0,
-    following: [],
+    following: [""],
+    followingCount: 0,
   });
-  const [userData, setUserData] = useState<GetUserData>({
+  const { followData: userFollowData, setFollowData: setUserFollowData } =
+    useFollowContext();
+  const { userData, setUserData } = useUserContext();
+  const [userData1, setUserData1] = useState<GetUserData>({
+    userId: "",
     username: "",
   });
   const [postsData, setPostsData] = useState<GetPostData[] | null>(null);
+  const isOwner = isOwnPage(userData.userId, params.userId);
+  console.log(isOwner);
+  const [isFollowed, setIsFollowed] = useState<boolean>(false);
+  const followHandler = async (isFollowed: boolean, userId: string) => {
+    let res;
+    if (isFollowed) {
+      res = await unFollowUser(userId);
+      if (res) {
+        setIsFollowed(false);
+      }
+    } else {
+      res = await followUser(userId);
+      if (res) {
+        setIsFollowed(true);
+      }
+    }
+    console.log(res);
+  };
   useEffect(() => {
     (async () => {
       setIsFetching(true);
@@ -127,10 +164,20 @@ export const UserDetail: React.FC<UserDetailProps> = ({}) => {
       setPostsData(data2);
       setPostListData(data0);
       setFollowData(data1);
-      setUserData(data3);
+      setUserData1(data3);
+      sleep(1);
       setIsFetching(false);
     })();
+    console.log("follow data:", followData);
+    let followIndex = userFollowData.following.indexOf(params.userId);
+    if (followIndex !== -1) {
+      setIsFollowed(true);
+    }
   }, []);
+  useEffect(() => {
+    console.log(isFollowed);
+    return () => {};
+  }, [isFollowed]);
   const renderPostPreview = (data: GetPostData[]): React.ReactElement => {
     let ren = data.map((post) => {
       if (post.image !== "" && post.postId !== "")
@@ -140,7 +187,6 @@ export const UserDetail: React.FC<UserDetailProps> = ({}) => {
             className="PP__hoverContainer"
             onClick={() => {
               history.push(`/p/${post.postId}`);
-              // setPostId(post.postId);
             }}
           >
             <div className="PostPreview__container">
@@ -158,17 +204,6 @@ export const UserDetail: React.FC<UserDetailProps> = ({}) => {
         );
     });
     return <div className="PostPreview">{ren}</div>;
-  };
-  const renderPostInRowOf3 = (data: GetPostData[]): React.ReactElement => {
-    let dataCopy = data;
-    let render = [];
-    let rows = Math.ceil(data.length / 3);
-    for (let i = 0; i < rows; i++) {
-      let rowData = dataCopy.splice(0, 3);
-      render.push(renderPostPreview(rowData));
-    }
-    // console.log(render);
-    return <ul className="pp">{render}</ul>;
   };
   if (isFetching) {
     return <LoadingScreen></LoadingScreen>;
@@ -189,7 +224,31 @@ export const UserDetail: React.FC<UserDetailProps> = ({}) => {
           </div>
           <div className="userIn4Detail__container">
             <div className="userIn4Username__container">
-              <h2 className="userIn4__username">{userData.username}</h2>
+              <span className="userIn4__username">{userData1.username}</span>
+              <div
+                onClick={() => {
+                  followHandler(isFollowed, params.userId);
+                }}
+                className={`userIn4__followContainer ${
+                  isOwner ? "userIn4__followContainer--ownerPage" : ""
+                } ${
+                  isFollowed
+                    ? "userIn4__followContainer--followed"
+                    : "userIn4__followContainer--notFollowed"
+                }`}
+              >
+                <span className="follow__button">
+                  {isFollowed ? (
+                    <FontAwesomeIcon
+                      icon={FollowedIcon}
+                      size="1x"
+                      color="#262626"
+                    ></FontAwesomeIcon>
+                  ) : (
+                    "Follow"
+                  )}
+                </span>
+              </div>
             </div>
             <div className="userIn4Count__container">
               <div className="postCount__container ">

@@ -1,3 +1,6 @@
+body {
+  background-color: white;
+}
 .UserDetail {
   padding-top: 53px;
   width: 100%;
@@ -40,7 +43,38 @@
   padding: 10px 20px 10px 20px;
 }
 
-.userIn4Username__container > h2 {
+.userIn4Username__container {
+  display: flex;
+  align-items: center;
+}
+.userIn4__followContainer--ownerPage {
+  display: none;
+  visibility: hidden;
+}
+.userIn4__followContainer--notFollowed {
+  background-color: #ff6347;
+}
+.userIn4__followContainer--followed {
+  background-color: white;
+  color: black;
+  /* box-shadow: ; */
+  border: 1px solid rgba(47, 47, 47, 0.2);
+  box-shadow: 0 0 2px 1px rgba(var(--jb7, 0, 0, 0), 0.0975);
+}
+.userIn4__followContainer {
+  cursor: pointer;
+  width: auto;
+  height: 100%;
+  padding: 0 7px 0 7px;
+  color: white;
+  font-weight: 700;
+  border-radius: 5px;
+  margin-left: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.userIn4Username__container > span {
   margin: 0;
 }
 .userIn4__username {
@@ -75,6 +109,7 @@
 .userPost__descriptionHeader {
   font-size: 1.2rem;
   width: auto;
+  font-weight: 500;
 }
 
 .ppImg__container {

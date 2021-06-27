@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, createContext } from "react";
 import { Logo } from "pages/Header/Logo";
 import { Nav } from "pages/Header/Nav";
 import { Post, PostProps } from "./Post";
@@ -15,6 +15,13 @@ import axiosInstance from "Utility/axios";
 import { getFavoriteList } from "Utility/favorites";
 import sleep from "Utility/sleep";
 import { NewPost } from "pages/NewPost/NewPost";
+import { useUserContext } from "Contexts/UserContext";
+import { useFollowContext } from "Contexts/FollowContext";
+interface FollowingData {
+  _id: string;
+  username: string;
+  email: string;
+}
 interface GetUserData {
   // username?: string;
   // userId?: string;
@@ -24,6 +31,8 @@ interface GetUserData {
     followerCount: number;
     followingCount: number;
     postCount: number;
+    follower: FollowingData[];
+    following: FollowingData[];
   };
   error?: {
     errorMsg: string;
@@ -68,6 +77,8 @@ const getUserName = async (): Promise<GetUserData> => {
         postCount: res.data.postCount,
         followerCount: followRes.data.followDoc.followerCount,
         followingCount: followRes.data.followDoc.followingCount,
+        follower: followRes.data.followDoc.follower,
+        following: followRes.data.followDoc.following,
       },
     };
     return getUserData;
@@ -78,10 +89,6 @@ const getUserName = async (): Promise<GetUserData> => {
   }
 };
 
-const getImg = async (imgId: string): Promise<string> => {
-  let resp = await axiosInstance.get(`/images/${imgId}`);
-  return resp.data;
-};
 const getPostsData = async (): Promise<PostData[]> => {
   let postsData: PostData[] = [];
   try {
@@ -136,8 +143,6 @@ const getImagesData = async (
   let returnData: PostDataWithAvatarAndInteractionStatus[] = [];
   returnData = await Promise.all(
     data.map(async (e) => {
-      // let img = await getImg(e.pictures[0]);
-      // e.pictures = [img];
       return { ...e };
     })
   );
@@ -150,12 +155,13 @@ const renderPost = (
   let render: React.ReactElement[] = [];
   if (data) {
     data
-      .slice(0)
-      .reverse()
+      // .slice(0)
+      // .reverse()
       .forEach((post) => {
         render.push(
           <LazyLoad key={post._id}>
             <Post
+              authorId={post.author._id}
               key={post._id}
               authorAvatar={post.avatar}
               postId={post._id}
@@ -179,6 +185,8 @@ const renderPost = (
 export const Feeds: React.FC<FeedsProps> = ({}) => {
   let favoriteList: string[];
   const history = useHistory();
+  const { userData, setUserData } = useUserContext();
+  const { followData, setFollowData } = useFollowContext();
   const [userDetailData, setUserDetailData] = useState<GetUserData>();
   const [isFetching, setIsFetching] = useState<boolean>(true);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -192,6 +200,26 @@ export const Feeds: React.FC<FeedsProps> = ({}) => {
     if (getUserNameRes.error) {
       setIsLoggedIn(false);
     } else {
+      // const userContext = createContext(getUserNameRes);
+      setUserData({
+        userId: getUserNameRes.userData!.userId,
+        username: getUserNameRes.userData!.username,
+      });
+      console.log(getUserNameRes);
+      let t = getUserNameRes.userData!.following;
+      let t0 = t.map((obj) => {
+        return obj._id;
+      });
+      let tt = getUserNameRes.userData!.follower;
+      let tt0 = tt.map((obj) => {
+        return obj._id;
+      });
+      setFollowData({
+        follower: tt0,
+        followerCount: getUserNameRes.userData!.followerCount,
+        following: t0,
+        followingCount: getUserNameRes.userData!.followingCount,
+      });
       setUserDetailData(getUserNameRes);
       setIsLoggedIn(true);
       favoriteList = await getFavoriteList();
