@@ -16,6 +16,8 @@ import { Socket } from "pages/Message/Socket";
 //import context
 import { UserContext } from "Contexts/UserContext";
 import { FollowContext, FollowContent } from "Contexts/FollowContext";
+import { FavoriteContent, FavoriteContext } from "Contexts/FavoriteContext";
+import Search from "pages/Search/Search";
 
 function App() {
   //first call an api to check if user have logged in or not, if not then navigate to login page
@@ -34,21 +36,41 @@ function App() {
     following: [""],
     followingCount: 0,
   });
+  const [favoriteData, setFavoriteData] = useState<
+    FavoriteContent["favoriteData"]
+  >({
+    favoriteList: [""],
+  });
   return (
-    <Router>
+    <Router forceRefresh={true}>
       <div className="App">
         <Switch>
-          <FollowContext.Provider value={{ followData, setFollowData }}>
-            <UserContext.Provider value={{ userData, setUserData }}>
-              <Route path="/login" component={Login} />
-              <Route path="/signup" component={Signup} />
-              <Route path="/p/:postId" component={SinglePostPage} />
-              <Route path="/user/:userId" component={UserDetail} exact />
-              <Route path="/message" component={Message} exact />
-              <Route path="/socket/:uid" component={Socket} />
-              <AuthenticatedRoute path="/" Component={Feeds} />
-            </UserContext.Provider>
-          </FollowContext.Provider>
+          <FavoriteContext.Provider value={{ favoriteData, setFavoriteData }}>
+            <FollowContext.Provider value={{ followData, setFollowData }}>
+              <UserContext.Provider value={{ userData, setUserData }}>
+                <Route path="/login" component={Login} />
+                <Route path="/signup" component={Signup} />
+                {/* <Route path="/p/:postId" component={SinglePostPage} /> */}
+                <AuthenticatedRoute
+                  path="/p/:postId"
+                  Component={SinglePostPage}
+                />
+                {/* <Route path="/user/:userId" component={UserDetail} exact /> */}
+                <Route path="/message" component={Message} exact />
+                {/* <Route path="/socket/:uid" component={Socket} /> */}
+                <AuthenticatedRoute
+                  path="/user/:userId"
+                  Component={UserDetail}
+                />
+                {/* <AuthenticatedRoute
+                  path="/search/:searchContent"
+                  Component={Search}
+                /> */}
+                <Route path="/search/:searchContent" component={Search} />
+                <AuthenticatedRoute path="/" Component={Feeds} />
+              </UserContext.Provider>
+            </FollowContext.Provider>
+          </FavoriteContext.Provider>
           {/* <AuthenticatedRoute path="/p/:postId" Component={SinglePostPage} /> */}
           {/* <Route path="/signup" exact component={Signup}></Route>
           <Route path="/login" exact component={Login}></Route>

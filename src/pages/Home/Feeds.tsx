@@ -17,6 +17,7 @@ import sleep from "Utility/sleep";
 import { NewPost } from "pages/NewPost/NewPost";
 import { useUserContext } from "Contexts/UserContext";
 import { useFollowContext } from "Contexts/FollowContext";
+import { useFavoriteContext } from "Contexts/FavoriteContext";
 interface FollowingData {
   _id: string;
   username: string;
@@ -46,7 +47,7 @@ interface HashtagData {
   _id: string;
   hashtag: string;
 }
-interface PostData {
+export interface PostData {
   _id: string;
   __v: number;
   author: {
@@ -101,10 +102,10 @@ const getPostsData = async (): Promise<PostData[]> => {
   return postsData;
 };
 interface FeedsProps {}
-interface PostDataWithAvatar extends PostData {
+export interface PostDataWithAvatar extends PostData {
   avatar: string;
 }
-const getAuthorsAvatar = async (
+export const getAuthorsAvatar = async (
   data: PostData[]
 ): Promise<PostDataWithAvatar[]> => {
   let postsData: PostDataWithAvatar[] = [];
@@ -117,18 +118,19 @@ const getAuthorsAvatar = async (
   return postsData;
 };
 
-interface PostDataWithAvatarAndInteractionStatus extends PostDataWithAvatar {
+export interface PostDataWithAvatarAndInteractionStatus
+  extends PostDataWithAvatar {
   isLiked: boolean;
   isSaved: boolean;
 }
-const getLikedNSavedStatus = async (
+export const getLikedNSavedStatus = async (
   data: PostDataWithAvatar[],
-  uData: GetUserData,
+  userId: string,
   favoriteList: string[]
 ): Promise<PostDataWithAvatarAndInteractionStatus[]> => {
   let returnData: PostDataWithAvatarAndInteractionStatus[] = [];
   returnData = data.map((d) => {
-    let likeIndex = d.likes.findIndex((e) => e === uData.userData?.userId);
+    let likeIndex = d.likes.findIndex((e) => e === userId);
     let isLiked: boolean = likeIndex === -1 ? false : true;
     let saveIndex = favoriteList.findIndex((e) => e === d._id);
     let isSaved: boolean = saveIndex === -1 ? false : true;
@@ -149,44 +151,42 @@ const getImagesData = async (
   return returnData;
 };
 
-const renderPost = (
+export const renderPost = (
   data: PostDataWithAvatarAndInteractionStatus[] | undefined
 ): React.ReactElement => {
   let render: React.ReactElement[] = [];
   if (data) {
-    data
-      // .slice(0)
-      // .reverse()
-      .forEach((post) => {
-        render.push(
-          <LazyLoad key={post._id}>
-            <Post
-              authorId={post.author._id}
-              key={post._id}
-              authorAvatar={post.avatar}
-              postId={post._id}
-              authorName={post.author.username}
-              postImg={`https://application.swanoogie.me/api/images/${post.pictures[0]}`}
-              likeCount={post.likeCount}
-              commentCount={post.commentCount}
-              saveCount={0}
-              caption={post.caption}
-              userAvatar={avatar}
-              isLiked={post.isLiked}
-              isSaved={post.isSaved}
-            ></Post>
-          </LazyLoad>
-        );
-      });
+    data.forEach((post) => {
+      render.push(
+        <LazyLoad key={post._id}>
+          <Post
+            authorId={post.author._id}
+            key={post._id}
+            authorAvatar={post.avatar}
+            postId={post._id}
+            authorName={post.author.username}
+            postImg={`https://application.swanoogie.me/api/images/${post.pictures[0]}`}
+            likeCount={post.likeCount}
+            commentCount={post.commentCount}
+            saveCount={0}
+            caption={post.caption}
+            userAvatar={avatar}
+            isLiked={post.isLiked}
+            isSaved={post.isSaved}
+          ></Post>
+        </LazyLoad>
+      );
+    });
   }
   return <div className="Posts__container">{render}</div>;
 };
 
 export const Feeds: React.FC<FeedsProps> = ({}) => {
-  let favoriteList: string[];
+  // let favoriteList: string[];
   const history = useHistory();
   const { userData, setUserData } = useUserContext();
   const { followData, setFollowData } = useFollowContext();
+  const { favoriteData, setFavoriteData } = useFavoriteContext();
   const [userDetailData, setUserDetailData] = useState<GetUserData>();
   const [isFetching, setIsFetching] = useState<boolean>(true);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -222,12 +222,13 @@ export const Feeds: React.FC<FeedsProps> = ({}) => {
       });
       setUserDetailData(getUserNameRes);
       setIsLoggedIn(true);
-      favoriteList = await getFavoriteList();
+      let favoriteList = await getFavoriteList();
+      setFavoriteData({ favoriteList: favoriteList });
       let data = await getPostsData();
       let data2 = await getAuthorsAvatar(data);
       let data3 = await getLikedNSavedStatus(
         data2,
-        getUserNameRes,
+        getUserNameRes.userData!.userId,
         favoriteList
       );
       let data4 = await getImagesData(data3);

@@ -12,7 +12,7 @@ import {
 } from "@fortawesome/fontawesome-free-solid";
 import { faEllipsisH } from "@fortawesome/fontawesome-free-solid";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { useHistory } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import { likePost, unlikePost } from "Utility/like";
 import { commentPost } from "Utility/comment";
 import LazyLoad from "react-lazyload";
@@ -112,7 +112,8 @@ export const Post: React.FC<PostProps> = ({
     history.push(`/p/${postId}`);
   };
   const navToUserPage = () => {
-    history.push(`user/${authorId}`);
+    history.push(`/user/${authorId}`);
+    // history.replace()
   };
   useEffect(() => {
     //check if comment is empty
@@ -126,16 +127,14 @@ export const Post: React.FC<PostProps> = ({
     <div className="Post">
       <div className="post__header">
         <div className="post__user">
-          <LazyLoad>
-            <img
-              src={authorAvatar}
-              alt=""
-              className="postUser__avatar"
-              onClick={() => {
-                navToUserPage();
-              }}
-            />
-          </LazyLoad>
+          <img
+            src={authorAvatar}
+            alt=""
+            className="postUser__avatar"
+            onClick={() => {
+              navToUserPage();
+            }}
+          />
           <span
             className="postUser__userName"
             onClick={() => {
@@ -207,9 +206,7 @@ export const Post: React.FC<PostProps> = ({
         <span className="postCaption__content">{caption}</span>
       </div>
       <div className="post__comment">
-        <LazyLoad>
-          <img src={userAvatar} alt="" className="postComment__avatar" />
-        </LazyLoad>
+        <img src={userAvatar} alt="" className="postComment__avatar" />
         <textarea
           ref={commentInputRef}
           className="postComment__input"

@@ -7,7 +7,6 @@ import { LoadingScreen } from "./LoadingScreen/LoadingScreen";
 interface AuthenticatedRouteProps {
   path: string;
   Component: any;
-  //   isLoggedIn: boolean;
 }
 
 export const AuthenticatedRoute: React.FC<AuthenticatedRouteProps> = ({
@@ -31,9 +30,10 @@ export const AuthenticatedRoute: React.FC<AuthenticatedRouteProps> = ({
     }
   }
   useEffect(() => {
-    (async () => {
-      await onLoad();
-    })();
+    onLoad();
+    // (async () => {
+    //   await onLoad();
+    // })();
   }, []);
   // console.log(isLoggedIn);
   if (isFetching) {

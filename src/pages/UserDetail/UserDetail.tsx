@@ -64,12 +64,22 @@ const getUserPostList = async (userId: string): Promise<GetPostListData> => {
   // console.log(postListData);
   return postListData;
 };
-const getFollowData = async (): Promise<GetFollowData> => {
-  let res = await axiosInstance.get(`/follows`);
+interface FollowData {
+  _id: string;
+  username: string;
+}
+const getFollowData = async (userId: string): Promise<GetFollowData> => {
+  let res = await axiosInstance.get(`/follows/${userId}`);
+  let followerList = res.data.followDoc.follower.map(
+    (obj: FollowData) => obj._id
+  );
+  let followingList = res.data.followDoc.following.map(
+    (obj: FollowData) => obj._id
+  );
   let followData: GetFollowData = {
-    follower: res.data.followDoc.follower,
+    follower: followerList,
     followerCount: res.data.followDoc.followerCount,
-    following: res.data.followDoc.following,
+    following: followingList,
     followingCount: res.data.followDoc.followingCount,
   };
   return followData;
@@ -105,7 +115,7 @@ interface Params {
 const getAllData = async (userId: string) => {
   let [data0, data1, data3] = await Promise.all([
     getUserPostList(userId),
-    getFollowData(),
+    getFollowData(userId),
     getUserData(userId),
   ]);
   let data2 = await getPostsFromPostList(data0.posts);

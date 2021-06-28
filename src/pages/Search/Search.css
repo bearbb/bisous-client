@@ -1,0 +1,79 @@
+.searchBody__container {
+  width: 100%;
+  padding-left: 30%;
+  padding-right: 30%;
+  padding-top: 73px;
+}
+.postSearch__container {
+  margin-top: 20px;
+}
+.searchDescription__container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+}
+.searchResult__description {
+  font-weight: 600;
+  /* margin-left: 70px; */
+  font-size: 1.2rem;
+}
+.postSearch__container > div > :nth-child(1) > div {
+  margin-top: 0;
+}
+.postSearch__description {
+  margin-left: 70px;
+}
+.userSearch__container {
+  margin-left: 70px;
+}
+.search__resultContainer {
+  width: 100%;
+  text-align: left;
+  /* padding-left: 70px; */
+}
+.search__result--notFound {
+  /* font-size: ; */
+  font-weight: 400;
+  /* font-style: italic; */
+}
+.postSearch__result--notFound {
+  margin-left: 70px;
+}
+.UserPreview {
+  margin: 20px 0px 10px 0;
+  width: 100%;
+}
+.UP__container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.UP__avatarContainer {
+  margin-right: 12px;
+}
+.UP__avatar {
+  width: 50px;
+}
+.UP__detailContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.UP__username {
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.UP__followCountContainer {
+  display: flex;
+  color: #65676b;
+  font-weight: 400;
+}
+/* .UP__followerCountContainer{
+  margin-right: ;
+} */
+.UP__followerCount {
+}
+.UP__followCountSeparation {
+  margin: 0 5px 0 5px;
+}
