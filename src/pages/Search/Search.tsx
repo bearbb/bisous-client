@@ -26,27 +26,28 @@ interface SearchParams {
   searchContent: string;
 }
 interface PostDetailData extends PostDataWithAvatarAndInteractionStatus {}
-let data: PostDetailData = {
-  __v: 1,
-  _id: "",
-  author: {
-    _id: "",
-    username: "",
-    email: "",
-  },
-  avatar: "",
-  caption: "",
-  commentCount: 0,
-  comments: [""],
-  createdAt: "",
-  hashtags: [{ _id: "", hashtag: "" }],
-  isLiked: false,
-  isSaved: false,
-  likeCount: 0,
-  likes: [""],
-  pictures: [""],
-  updatedAt: "",
-};
+// let data: PostDetailData = {
+//   __v: 1,
+//   _id: "",
+//   author: {
+//     _id: "",
+//     username: "",
+//     email: "",
+//     avatar: "",
+//   },
+//   avatar: "",
+//   caption: "",
+//   commentCount: 0,
+//   comments: [""],
+//   createdAt: "",
+//   hashtags: [{ _id: "", hashtag: "" }],
+//   isLiked: false,
+//   isSaved: false,
+//   likeCount: 0,
+//   likes: [""],
+//   pictures: [""],
+//   updatedAt: "",
+// };
 interface UserData {
   username: string;
   userId: string;
@@ -113,13 +114,13 @@ const Search: React.FC<SearchProps> = ({}) => {
       // console.log(res.data);
       let postDoc: PostData[] = res.data.postDoc;
       let userSearchDoc: UserData[] = res.data.userData;
-      let temp1 = await getAuthorsAvatar(postDoc);
+      let temp1 = await getAuthorsAvatar(postDoc, userData.avatar);
       let temp2 = await getLikedNSavedStatus(
         temp1,
         userData.userId,
         favoriteData.favoriteList
       );
-      console.log(temp2);
+      // console.log(temp2);
       setPostSearchData(temp2);
       // console.log(userSearchDoc);
       let temp3 = await getUserFollow(userSearchDoc);
@@ -129,10 +130,6 @@ const Search: React.FC<SearchProps> = ({}) => {
     getSearchData(params.searchContent);
     return () => {};
   }, []);
-  useEffect(() => {
-    console.log(postSearchData);
-    return () => {};
-  }, [postSearchData]);
   return (
     <div className="Search">
       <div className="feedsHeader__container">

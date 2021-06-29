@@ -76,6 +76,7 @@ export const SinglePost: React.FC<GetPostData> = ({
     setNewComment(event.target.value.toString());
   };
   useEffect(() => {
+    console.log(commentsList);
     let temp = timeSince(createdAt);
     setTimeSinceCreated(temp);
     return () => {};
@@ -141,7 +142,7 @@ export const SinglePost: React.FC<GetPostData> = ({
       .map((comment) => {
         return (
           <Comment
-            avatar={avatar}
+            avatar={`https://application.swanoogie.me/api/images/${comment.author.avatar}`}
             content={comment.comment}
             username={comment.author.username}
           ></Comment>
@@ -163,7 +164,11 @@ export const SinglePost: React.FC<GetPostData> = ({
             <div className="spDescription__1th">
               <div className="spAuthor__container">
                 <div className="spAvatar__container">
-                  <img src={avatar} alt="" className="sp__avatar" />
+                  <img
+                    src={`https://application.swanoogie.me/api/images/${author.avatar}`}
+                    alt=""
+                    className="sp__avatar"
+                  />
                 </div>
                 <div className="spUsername__container">
                   <span className="sp__username">{author.username}</span>
@@ -174,7 +179,7 @@ export const SinglePost: React.FC<GetPostData> = ({
                   {/* Render out caption as a comment element */}
                   <div className="spCaption__container">
                     <Comment
-                      avatar={avatar}
+                      avatar={`https://application.swanoogie.me/api/images/${author.avatar}`}
                       username={author.username}
                       content={caption}
                     />

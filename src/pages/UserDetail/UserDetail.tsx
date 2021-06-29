@@ -48,10 +48,15 @@ interface GetFollowData {
 interface GetUserData {
   username: string;
   userId: string;
+  userAvatar: string;
 }
 const getUserData = async (userId: string): Promise<GetUserData> => {
   let res = await axiosInstance.get(`/users/${userId}`);
-  return { username: res.data.userDoc.username, userId: userId };
+  return {
+    username: res.data.userDoc.username,
+    userId: userId,
+    userAvatar: res.data.userDoc.avatar,
+  };
 };
 const getUserPostList = async (userId: string): Promise<GetPostListData> => {
   let postListData: GetPostListData = {
@@ -119,11 +124,12 @@ const getAllData = async (userId: string) => {
     getUserData(userId),
   ]);
   let data2 = await getPostsFromPostList(data0.posts);
+  console.log(data3);
   return { data0, data1, data2, data3 };
 };
 const isOwnPage = (ownId: string, paramsUserId: string) => {
-  console.log("ownId: ", ownId);
-  console.log("paramsID: ", paramsUserId);
+  // console.log("ownId: ", ownId);
+  // console.log("paramsID: ", paramsUserId);
   return ownId === paramsUserId;
 };
 export const UserDetail: React.FC<UserDetailProps> = ({}) => {
@@ -147,6 +153,7 @@ export const UserDetail: React.FC<UserDetailProps> = ({}) => {
   const [userData1, setUserData1] = useState<GetUserData>({
     userId: "",
     username: "",
+    userAvatar: "",
   });
   const [postsData, setPostsData] = useState<GetPostData[] | null>(null);
   const isOwner = isOwnPage(userData.userId, params.userId);
@@ -230,7 +237,11 @@ export const UserDetail: React.FC<UserDetailProps> = ({}) => {
       <div className="user__container">
         <div className="userDetailInformation__container">
           <div className="userIn4Avatar__container">
-            <img src={userIn4.avatar} alt="" className="userIn4__avatar" />
+            <img
+              src={`https://application.swanoogie.me/api/images/${userData1.userAvatar}`}
+              alt=""
+              className="userIn4__avatar"
+            />
           </div>
           <div className="userIn4Detail__container">
             <div className="userIn4Username__container">

@@ -7,9 +7,8 @@ import { User } from "pages/SideNav/User";
 import { Utility } from "pages/Header/Utility";
 import "styles/Feed.css";
 import avatar from "styles/images/avatar.webp";
-import postImg from "styles/images/wallpaper.jpg";
 import { LoadingScreen } from "pages/LoadingScreen/LoadingScreen";
-import { useHistory } from "react-router-dom";
+import { useHistory, withRouter } from "react-router-dom";
 import LazyLoad from "react-lazyload";
 import axiosInstance from "Utility/axios";
 import { getFavoriteList } from "Utility/favorites";
@@ -18,31 +17,9 @@ import { NewPost } from "pages/NewPost/NewPost";
 import { useUserContext } from "Contexts/UserContext";
 import { useFollowContext } from "Contexts/FollowContext";
 import { useFavoriteContext } from "Contexts/FavoriteContext";
-interface FollowingData {
-  _id: string;
-  username: string;
-  email: string;
-}
-interface GetUserData {
-  // username?: string;
-  // userId?: string;
-  userData?: {
-    username: string;
-    userId: string;
-    followerCount: number;
-    followingCount: number;
-    postCount: number;
-    follower: FollowingData[];
-    following: FollowingData[];
-  };
-  error?: {
-    errorMsg: string;
-  };
-}
-interface CommentData {
-  comment: string;
-  author: string;
-}
+import { getUserData, getOwnerData } from "Utility/user";
+import { getOwnerFollowData } from "Utility/follow";
+import { getUserPostData } from "Utility/post";
 interface HashtagData {
   _id: string;
   hashtag: string;
@@ -54,6 +31,7 @@ export interface PostData {
     _id: string;
     username: string;
     email?: string;
+    avatar: string;
   };
   caption: string;
   commentCount: number;
@@ -66,30 +44,6 @@ export interface PostData {
   updatedAt: string;
   // avatar?: string;
 }
-const getUserName = async (): Promise<GetUserData> => {
-  let getUserData: GetUserData = {};
-  try {
-    let res = await axiosInstance.get("/users");
-    let followRes = await axiosInstance.get("/follows");
-    getUserData = {
-      userData: {
-        username: res.data.username,
-        userId: res.data.userId,
-        postCount: res.data.postCount,
-        followerCount: followRes.data.followDoc.followerCount,
-        followingCount: followRes.data.followDoc.followingCount,
-        follower: followRes.data.followDoc.follower,
-        following: followRes.data.followDoc.following,
-      },
-    };
-    return getUserData;
-  } catch (error) {
-    // console.error(error.response);
-    getUserData = { error: { errorMsg: error.response.data.message } };
-    return getUserData;
-  }
-};
-
 const getPostsData = async (): Promise<PostData[]> => {
   let postsData: PostData[] = [];
   try {
@@ -103,16 +57,17 @@ const getPostsData = async (): Promise<PostData[]> => {
 };
 interface FeedsProps {}
 export interface PostDataWithAvatar extends PostData {
-  avatar: string;
+  ownerAvatar: string;
 }
 export const getAuthorsAvatar = async (
-  data: PostData[]
+  data: PostData[],
+  ownerAvatar: string
 ): Promise<PostDataWithAvatar[]> => {
   let postsData: PostDataWithAvatar[] = [];
   postsData = await Promise.all(
     data.map(async (d) => {
-      let ava = avatar;
-      return { ...d, avatar: ava };
+      let ava = `https://application.swanoogie.me/api/images/${ownerAvatar}`;
+      return { ...d, ownerAvatar: ava };
     })
   );
   return postsData;
@@ -162,7 +117,11 @@ export const renderPost = (
           <Post
             authorId={post.author._id}
             key={post._id}
-            authorAvatar={post.avatar}
+            authorAvatar={
+              post.author.avatar
+                ? `https://application.swanoogie.me/api/images/${post.author.avatar}`
+                : "https://application.swanoogie.me/api/images/60dac0a31fc8b842473cd857"
+            }
             postId={post._id}
             authorName={post.author.username}
             postImg={`https://application.swanoogie.me/api/images/${post.pictures[0]}`}
@@ -170,7 +129,7 @@ export const renderPost = (
             commentCount={post.commentCount}
             saveCount={0}
             caption={post.caption}
-            userAvatar={avatar}
+            userAvatar={post.ownerAvatar}
             isLiked={post.isLiked}
             isSaved={post.isSaved}
           ></Post>
@@ -181,65 +140,64 @@ export const renderPost = (
   return <div className="Posts__container">{render}</div>;
 };
 
-export const Feeds: React.FC<FeedsProps> = ({}) => {
-  // let favoriteList: string[];
+const Feeds: React.FC<FeedsProps> = ({}) => {
   const history = useHistory();
-  const { userData, setUserData } = useUserContext();
-  const { followData, setFollowData } = useFollowContext();
+  const { userData: ownerData, setUserData: setOwnerData } = useUserContext();
+  const { followData: ownerFollowData, setFollowData: setOwnerFollowData } =
+    useFollowContext();
   const { favoriteData, setFavoriteData } = useFavoriteContext();
-  const [userDetailData, setUserDetailData] = useState<GetUserData>();
+  const [postCount, setPostCount] = useState<number>(0);
   const [isFetching, setIsFetching] = useState<boolean>(true);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [toggleNewPost, setToggleNewPost] = useState<boolean>(false);
+  useEffect(() => {
+    console.log(ownerData);
+    return () => {};
+  }, []);
   const [fetchPostDataSignal, setFetchPostDataSignal] =
     useState<boolean>(false);
   const [postsData, setPostsData] =
     useState<PostDataWithAvatarAndInteractionStatus[]>();
-  const FetchPostData = async () => {
-    let getUserNameRes = await getUserName();
-    if (getUserNameRes.error) {
-      setIsLoggedIn(false);
-    } else {
-      // const userContext = createContext(getUserNameRes);
-      setUserData({
-        userId: getUserNameRes.userData!.userId,
-        username: getUserNameRes.userData!.username,
-      });
-      console.log(getUserNameRes);
-      let t = getUserNameRes.userData!.following;
-      let t0 = t.map((obj) => {
-        return obj._id;
-      });
-      let tt = getUserNameRes.userData!.follower;
-      let tt0 = tt.map((obj) => {
-        return obj._id;
-      });
-      setFollowData({
-        follower: tt0,
-        followerCount: getUserNameRes.userData!.followerCount,
-        following: t0,
-        followingCount: getUserNameRes.userData!.followingCount,
-      });
-      setUserDetailData(getUserNameRes);
-      setIsLoggedIn(true);
-      let favoriteList = await getFavoriteList();
-      setFavoriteData({ favoriteList: favoriteList });
-      let data = await getPostsData();
-      let data2 = await getAuthorsAvatar(data);
-      let data3 = await getLikedNSavedStatus(
-        data2,
-        getUserNameRes.userData!.userId,
-        favoriteList
-      );
-      let data4 = await getImagesData(data3);
-      setPostsData(data4);
-      await sleep(300);
+  //Get all owner data
+  const getAllOwnerData = async () => {
+    let [ownerData, ownerFollowData, ownerFavorites] = await Promise.all([
+      getOwnerData(),
+      getOwnerFollowData(),
+      getFavoriteList(),
+    ]);
+    if (
+      ownerData !== null &&
+      ownerFollowData !== null &&
+      ownerFavorites !== null
+    ) {
+      let ownerPostData = await getUserPostData(ownerData.userData.userId);
+      if (ownerPostData !== null) {
+        setPostCount(ownerPostData.postCount);
+        setOwnerData({ ...ownerData.userData, isReady: true });
+        setOwnerFollowData(ownerFollowData);
+        setFavoriteData({ favoriteList: ownerFavorites });
+      }
     }
+  };
+  const FetchPostData = async () => {
+    setIsFetching(true);
+    let data = await getPostsData();
+    let data2 = await getAuthorsAvatar(data, ownerData.avatar);
+    let data3 = await getLikedNSavedStatus(
+      data2,
+      ownerData.userId,
+      favoriteData.favoriteList
+    );
+    let data4 = await getImagesData(data3);
+    setPostsData(data4);
+    await sleep(300);
     setIsFetching(false);
   };
   useEffect(() => {
-    // console.log();
-    FetchPostData();
+    (async () => {
+      // await getAllOwnerData();
+      await FetchPostData();
+    })();
+    console.log(ownerData);
   }, []);
   useEffect(() => {
     if (fetchPostDataSignal) {
@@ -250,10 +208,6 @@ export const Feeds: React.FC<FeedsProps> = ({}) => {
   if (isFetching) {
     return <LoadingScreen></LoadingScreen>;
   } else {
-    // console.log(isLoggedIn);
-    if (!isLoggedIn) {
-      history.push("/login");
-    }
     return (
       <div className={`Feeds ${toggleNewPost ? "Feeds--flex" : ""}`}>
         <div
@@ -287,13 +241,13 @@ export const Feeds: React.FC<FeedsProps> = ({}) => {
           <div className="leftSide__Nav--fixed">
             <div className="feedsLeftSideNav__container">
               <User
-                userAvatar={avatar}
-                userName={userDetailData!.userData!.username}
+                userAvatar={ownerData.avatar}
+                userName={ownerData.username}
                 name="displayName"
-                postCount={userDetailData!.userData!.postCount}
-                followerCount={userDetailData!.userData!.followerCount}
-                followingCount={userDetailData!.userData!.followingCount}
-                userId={userDetailData!.userData!.userId}
+                postCount={postCount}
+                followerCount={ownerFollowData.followerCount}
+                followingCount={ownerFollowData.followingCount}
+                userId={ownerData.userId}
               ></User>
               <Nav></Nav>
             </div>
@@ -307,3 +261,5 @@ export const Feeds: React.FC<FeedsProps> = ({}) => {
     );
   }
 };
+
+export default withRouter(Feeds);

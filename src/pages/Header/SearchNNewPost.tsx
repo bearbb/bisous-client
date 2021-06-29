@@ -28,8 +28,9 @@ export const SearchNNewPost: React.FC<SearchNNewPostProps> = ({
   };
   const onEnterPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && searchContent !== "") {
-      console.log("Pressed");
+      // console.log("Pressed");
       history.push(`/search/${searchContent}`);
+      // window.location.reload()
       setSearchContent("");
       searchContentInputRef.current!.value = "";
     }

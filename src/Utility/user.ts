@@ -4,30 +4,51 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 export interface GetUserData {
-  success: boolean;
-  username?: string;
-  userId?: string;
-  error?: {
-    errorMsg: string;
+  userData: {
+    username: string;
+    userId: string;
+    avatar: string;
   };
 }
-const getUserName = async (): Promise<GetUserData> => {
-  let userData: GetUserData = { success: false };
+const getOwnerData = async (): Promise<GetUserData | null> => {
   try {
     let res = await axiosInstance.get("/users");
-    userData = {
-      success: res.data.success,
-      username: res.data.username,
-      userId: res.data.userId,
+    return {
+      userData: {
+        username: res.data.username,
+        userId: res.data.userId,
+        avatar: res.data.avatar,
+      },
     };
-    return userData;
   } catch (error) {
-    console.error(error.response);
-    userData = {
-      success: error.response.data.success,
-      error: { errorMsg: error.response.data.message },
-    };
-    return userData;
+    console.log("Unauthorized");
+    // console.error(error);
+    if (error.response) {
+      console.log(error.response);
+    }
+    return null;
   }
 };
-export { getUserName };
+const getUserData = async (userId: string): Promise<GetUserData | null> => {
+  try {
+    let res = await axiosInstance.get(`/users/${userId}`);
+    return {
+      userData: {
+        username: res.data.userDoc.username,
+        userId,
+        avatar: res.data.userDoc.avatar,
+      },
+    };
+  } catch (err) {
+    return null;
+  }
+};
+const getLogInStatus = async (): Promise<boolean> => {
+  try {
+    let res = await axiosInstance.get("/users");
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+export { getOwnerData, getUserData, getLogInStatus };

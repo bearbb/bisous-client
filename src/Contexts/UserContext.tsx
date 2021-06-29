@@ -1,30 +1,26 @@
 import { createContext, useContext } from "react";
 
-interface userData {
-  username: string;
-  userId: string;
-}
-
-interface UserState {
-  state: {
-    username: string;
-    userId: string;
-  };
-  setState: React.Dispatch<React.SetStateAction<userData | null>>;
-}
-
 export type UserContent = {
   userData: {
     username: string;
     userId: string;
+    avatar: string;
+    isReady: boolean | null;
   };
-  setUserData: (data: { username: string; userId: string }) => void;
+  setUserData: (data: {
+    username: string;
+    userId: string;
+    avatar: string;
+    isReady: boolean | null;
+  }) => void;
 };
 
 export const UserContext = createContext<UserContent>({
   userData: {
     username: "",
     userId: "",
+    avatar: "",
+    isReady: false,
   },
   setUserData: () => {},
 });

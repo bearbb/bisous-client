@@ -33,6 +33,9 @@ body {
 }
 .userIn4__avatar {
   width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .userIn4Detail__container {

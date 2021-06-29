@@ -27,15 +27,13 @@ const deletePostFromFavorite = async (postId: string) => {
   return res;
 };
 
-const getFavoriteList = async () => {
-  let res;
+const getFavoriteList = async (): Promise<string[] | null> => {
   try {
     let resp = await axiosInstance.get("/favorites");
-    res = resp.data.favorite.favorites;
+    return resp.data.favorite.favorites;
   } catch (error) {
-    res = error.response;
+    return null;
   }
-  return res;
 };
 
 export { addPostToFavorite, deletePostFromFavorite, getFavoriteList };

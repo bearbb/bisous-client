@@ -7,7 +7,9 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import "styles/Login.css";
 import axiosInstance from "Utility/axios";
 const LoadingIcon = faSpinner as IconProp;
-interface LoginProps {}
+interface LoginProps {
+  history: any;
+}
 interface UserCredential {
   username: string;
   password: string;
@@ -31,7 +33,7 @@ const axiosLogin = async (data: UserCredential): Promise<loginRes> => {
     };
   }
 };
-export const Login: React.FC<LoginProps> = ({}) => {
+export const Login: React.FC<LoginProps> = ({ history: his }) => {
   const history = useHistory();
   const [userName, setUserName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -64,27 +66,22 @@ export const Login: React.FC<LoginProps> = ({}) => {
     return true;
   };
   const navToSignUp = () => {
-    history.push("/signup");
+    // history.push("/signup");
   };
-  // useEffect(() => { console.log(
-  //     `%c${isLogin}`,
-  //     "background: #292d3e; color: #f07178; font-weight: bold"
-  //   );
-  //   return () => {};
-  // }, [isLogin]);
   const signInHandler = async () => {
+    //TODO: fix after login and push new history, component not render
     //TODO: perform a logic checking on username and password before send to api
     //Exec login
     //clear password field after click
     try {
-      setIsLogin(true);
       setIsFetching(true);
       let res = await axiosLogin({ username: userName, password });
       if (res.error) {
         setLoginErr(res.error.errorMsg);
       } else {
         // console.log(res.token);
-        history.push("/");
+        // history.push("/");
+        his.push("/");
       }
       setIsLogin(false);
       setPassword("");

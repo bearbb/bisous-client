@@ -34,7 +34,11 @@ export const User: React.FC<UserProps> = ({
           className="userInformation__avatarContainer"
           onClick={navToUserPage}
         >
-          <img src={avatar} alt="" className="userInformation__avatar" />
+          <img
+            src={`https://application.swanoogie.me/api/images/${userAvatar}`}
+            alt=""
+            className="userInformation__avatar"
+          />
         </div>
         <div className="userInformation__description">
           <span className="userInformation__userName" onClick={navToUserPage}>

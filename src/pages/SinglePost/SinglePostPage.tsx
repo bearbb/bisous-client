@@ -12,7 +12,8 @@ import yuna from "styles/images/yuna.jpg";
 import yuna2 from "styles/images/yuna2.jpg";
 import { Share } from "./Share";
 import axiosInstance from "Utility/axios";
-import { getUserName, GetUserData } from "Utility/user";
+import { getOwnerData, GetUserData } from "Utility/user";
+import { useUserContext } from "Contexts/UserContext";
 
 interface like {
   _id: string;
@@ -119,7 +120,7 @@ export interface CommentData {
   comment: string;
   author: {
     username: string;
-    avatar?: any;
+    avatar: string;
   };
 }
 interface HashtagData {
@@ -136,6 +137,7 @@ export interface GetPostData {
   author: {
     _id: string;
     username: string;
+    avatar: string;
   };
   caption: string;
   commentCount: number;
@@ -158,13 +160,13 @@ const getPostData = async (postId: string): Promise<GetPostData> => {
     const resp = await axiosInstance.get(`/posts/${postId}`);
     res = resp.data.post;
   } catch (error) {
-    // console.error(error);
     res = error.response;
   }
   return res;
 };
 
 export const SinglePostPage: React.FC<SinglePostPageProps> = ({}) => {
+  const { userData: ownerData, setUserData: setOwnerData } = useUserContext();
   const params: Params = useParams();
   const [postData, setPostData] = useState<GetPostData>();
   const [toggleShare, setToggleShare] = useState(false);
@@ -186,12 +188,10 @@ export const SinglePostPage: React.FC<SinglePostPageProps> = ({}) => {
   }, [toggleShare]);
   useEffect(() => {
     (async () => {
-      let userData: GetUserData = await getUserName();
       let res: GetPostData = await getPostData(params.postId);
       let imgUrl = `https://application.swanoogie.me/api/images/${res.pictures[0]}`;
-      let likeIndex = res.likes.findIndex(
-        (e) => e.username === userData.username
-      );
+      console.log(ownerData.userId);
+      let likeIndex = res.likes.findIndex((e) => e._id === ownerData.userId);
       if (likeIndex !== -1) {
         res.isLiked = true;
       } else {
