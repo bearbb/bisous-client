@@ -44,7 +44,7 @@ export const User: React.FC<UserProps> = ({
           <span className="userInformation__userName" onClick={navToUserPage}>
             {userName}
           </span>
-          <span className="userInformation__name">{name}</span>
+          {/* <span className="userInformation__name">{name}</span> */}
         </div>
       </div>
       <div className="userInformationCount__container">

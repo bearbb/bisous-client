@@ -26,6 +26,7 @@ import { getFollowData, getOwnerFollowData } from "Utility/follow";
 import { getLogInStatus, getOwnerData } from "Utility/user";
 import sleep from "Utility/sleep";
 import { getUserPostData } from "Utility/post";
+import { EditProfile } from "pages/EditProfilePage/EditProfile";
 
 function App() {
   let componentMounted = true;
@@ -129,6 +130,10 @@ function App() {
                       Component={Search}
                       renderFunc={() => <Search key={Date.now()}></Search>}
                     />
+                    <AuthenticatedRoute
+                      path="/profile/edit"
+                      Component={EditProfile}
+                    ></AuthenticatedRoute>
                     <AuthenticatedRoute path="/" Component={Feeds} />
                   </UserContext.Provider>
                 </FollowContext.Provider>

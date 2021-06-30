@@ -45,6 +45,7 @@ export const NewPost: React.FC<NewPostProps> = ({
       if (e.target.files[0].size <= 1000000) {
         setUrlData(URL.createObjectURL(e.target.files[0]));
         setData(e.target.files[0]);
+        console.log(e.target.files[0]);
       } else {
         setIsExceedSizeLimit(true);
       }
@@ -97,7 +98,7 @@ export const NewPost: React.FC<NewPostProps> = ({
       if (data) {
         imageData.append("imageFile", data);
       }
-      // console.log(imageData);
+      console.log(imageData);
       let resp = await axiosInstance.post("/images", imageData);
       let imgId = resp.data.imageId;
       if (clearToPost) {

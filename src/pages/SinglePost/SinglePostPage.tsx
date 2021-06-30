@@ -190,7 +190,7 @@ export const SinglePostPage: React.FC<SinglePostPageProps> = ({}) => {
     (async () => {
       let res: GetPostData = await getPostData(params.postId);
       let imgUrl = `https://application.swanoogie.me/api/images/${res.pictures[0]}`;
-      console.log(ownerData.userId);
+      // console.log(ownerData.userId);
       let likeIndex = res.likes.findIndex((e) => e._id === ownerData.userId);
       if (likeIndex !== -1) {
         res.isLiked = true;

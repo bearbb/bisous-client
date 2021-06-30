@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faBell } from "@fortawesome/fontawesome-free-regular";
-import { faBars, faPowerOff, faCog } from "@fortawesome/fontawesome-free-solid";
+import {
+  faBars,
+  faPowerOff,
+  faCog,
+  faUserEdit,
+} from "@fortawesome/fontawesome-free-solid";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useHistory } from "react-router-dom";
 import axiosInstance from "Utility/axios";
@@ -11,6 +16,7 @@ const NotificationIcon = faBell as IconProp;
 const OthersIcon = faBars as IconProp;
 const LogoutIcon = faPowerOff as IconProp;
 const SettingIcon = faCog as IconProp;
+const UserEditIcon = faUserEdit as IconProp;
 
 interface UtilityProps {}
 
@@ -43,6 +49,9 @@ export const Utility: React.FC<UtilityProps> = ({}) => {
       console.log(res);
     }
   };
+  const editProfileHandler = () => {
+    history.push("/profile/edit");
+  };
   return (
     <div className="Utility">
       <div className="utility__container">
@@ -74,11 +83,16 @@ export const Utility: React.FC<UtilityProps> = ({}) => {
           </span>
           <span className="logout__description"> Logout</span>
         </div>
-        <div className="setting__container">
-          <span className="setting__button">
-            <FontAwesomeIcon icon={SettingIcon}></FontAwesomeIcon>
+        <div
+          className="userEdit__container"
+          onClick={() => {
+            editProfileHandler();
+          }}
+        >
+          <span className="userEdit__button">
+            <FontAwesomeIcon icon={UserEditIcon}></FontAwesomeIcon>
           </span>
-          <span className="setting__description"> Setting</span>
+          <span className="userEdit__description"> Edit profile</span>
         </div>
       </div>
     </div>

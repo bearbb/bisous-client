@@ -136,7 +136,8 @@
   height: 2rem;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-left: 10px;
   cursor: pointer;
 }
 .settingDropdown__container > div > span {

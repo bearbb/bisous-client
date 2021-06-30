@@ -49,6 +49,7 @@ interface GetUserData {
   username: string;
   userId: string;
   userAvatar: string;
+  bio: string;
 }
 const getUserData = async (userId: string): Promise<GetUserData> => {
   let res = await axiosInstance.get(`/users/${userId}`);
@@ -56,6 +57,7 @@ const getUserData = async (userId: string): Promise<GetUserData> => {
     username: res.data.userDoc.username,
     userId: userId,
     userAvatar: res.data.userDoc.avatar,
+    bio: res.data.userDoc.bio,
   };
 };
 const getUserPostList = async (userId: string): Promise<GetPostListData> => {
@@ -154,6 +156,7 @@ export const UserDetail: React.FC<UserDetailProps> = ({}) => {
     userId: "",
     username: "",
     userAvatar: "",
+    bio: "",
   });
   const [postsData, setPostsData] = useState<GetPostData[] | null>(null);
   const isOwner = isOwnPage(userData.userId, params.userId);
@@ -300,9 +303,7 @@ export const UserDetail: React.FC<UserDetailProps> = ({}) => {
               </div>
             </div>
             <div className="userIn4Description__container">
-              <span className="userIn4__description">
-                {userIn4.description}
-              </span>
+              <span className="userIn4__description">{userData1.bio}</span>
             </div>
           </div>
         </div>

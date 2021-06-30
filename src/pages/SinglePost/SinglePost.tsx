@@ -76,7 +76,6 @@ export const SinglePost: React.FC<GetPostData> = ({
     setNewComment(event.target.value.toString());
   };
   useEffect(() => {
-    console.log(commentsList);
     let temp = timeSince(createdAt);
     setTimeSinceCreated(temp);
     return () => {};
@@ -94,6 +93,7 @@ export const SinglePost: React.FC<GetPostData> = ({
     try {
       if (!newCommentIsEmpty) {
         let res = await commentPost(_id, newComment);
+        console.log(res);
         setCommentsList(res.post.comments);
         setNewComment("");
         newCommentInputRef.current!.value = "";
@@ -142,6 +142,7 @@ export const SinglePost: React.FC<GetPostData> = ({
       .map((comment) => {
         return (
           <Comment
+            key={comment._id}
             avatar={`https://application.swanoogie.me/api/images/${comment.author.avatar}`}
             content={comment.comment}
             username={comment.author.username}
