@@ -12,12 +12,22 @@ export const Nav: React.FC<NavProps> = ({}) => {
     <div className="Nav">
       <div className="nav__container">
         <div className="nav__home nav__element">
-          <FontAwesomeIcon icon={faHome} />
-          <span className="nav__label">Home</span>
+          <div className="nav__iconContainer">
+            <div className="nav__elementIndicator indicator--activated"></div>
+            <FontAwesomeIcon icon={faHome} className="nav__icon" />
+          </div>
+          <div className="nav__labelContainer">
+            <span className="nav__label">Home</span>
+          </div>
         </div>
         <div className="nav__element nav__save">
-          <FontAwesomeIcon icon={SaveIcon} />
-          <span className="nav__label">Save</span>
+          <div className="nav__iconContainer">
+            <div className="nav__elementIndicator"></div>
+            <FontAwesomeIcon icon={SaveIcon} className="nav__icon" />
+          </div>
+          <div className="nav__labelContainer">
+            <span className="nav__label">Save</span>
+          </div>
         </div>
       </div>
     </div>

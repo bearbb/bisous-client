@@ -8,6 +8,7 @@
   top: 0;
   border-bottom: 1px solid rgba(47, 47, 47, 0.233);
   background-color: #ffffff;
+  min-width: 1200px;
 }
 .headerFlex__container {
   width: 100%;
@@ -179,9 +180,4 @@
 .leftSide__Nav--fixed {
   display: block;
   position: fixed;
-}
-.feedsLeftSideNav__container {
-  display: flex;
-  flex-flow: column;
-  gap: 20px;
 }

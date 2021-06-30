@@ -24,7 +24,7 @@ export const Utility: React.FC<UtilityProps> = ({}) => {
   const [toggleDropdown, setToggleDropdown] = useState<boolean>(false);
   const history = useHistory();
   const messageHandler = () => {
-    history.push("/message");
+    // history.push("/message");
   };
   const notificationHandler = () => {};
   const settingHandler = () => {

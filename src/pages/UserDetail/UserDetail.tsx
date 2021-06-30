@@ -16,6 +16,7 @@ import { faUserCheck } from "@fortawesome/fontawesome-free-solid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { followUser, unFollowUser } from "Utility/follow";
+import { LoadingCube } from "pages/LoadingScreen/LoadingCube";
 const FollowedIcon = faUserCheck as IconProp;
 interface UserDetailProps {}
 
@@ -226,7 +227,7 @@ export const UserDetail: React.FC<UserDetailProps> = ({}) => {
     return <div className="PostPreview">{ren}</div>;
   };
   if (isFetching) {
-    return <LoadingScreen></LoadingScreen>;
+    return <LoadingCube></LoadingCube>;
   }
   return (
     <div className="UserDetail">

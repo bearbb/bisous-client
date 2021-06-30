@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Component } from "react";
 import "./App.css";
 import { Login } from "pages/Login";
 import { Signup } from "pages/Signup";
-import { Switch, Route, Router } from "react-router-dom";
-import Feeds from "pages/Home/Feeds";
+import {
+  Switch,
+  Route,
+  BrowserRouter as Router,
+  Redirect,
+} from "react-router-dom";
+import { Feeds } from "pages/Home/Feeds";
 import { Message } from "pages/Message/Message";
 import { SinglePostPage } from "pages/SinglePost/SinglePostPage";
 import { UserDetail } from "pages/UserDetail/UserDetail";
@@ -27,6 +32,8 @@ import { getLogInStatus, getOwnerData } from "Utility/user";
 import sleep from "Utility/sleep";
 import { getUserPostData } from "Utility/post";
 import { EditProfile } from "pages/EditProfilePage/EditProfile";
+import { Home } from "pages/Home/Home";
+import { LoadingCube } from "pages/LoadingScreen/LoadingCube";
 
 function App() {
   let componentMounted = true;
@@ -97,10 +104,10 @@ function App() {
     favoriteList: [""],
   });
   if (loginStatusData.isLoggedIn === null || userData.isReady === false) {
-    return <LoadingScreen></LoadingScreen>;
+    return <LoadingCube></LoadingCube>;
   } else {
     return (
-      <Router history={history}>
+      <Router>
         <div className="App">
           <Switch>
             <LoginStatusContext.Provider
@@ -119,7 +126,8 @@ function App() {
                       Component={SinglePostPage}
                     />
                     {/* <Route path="/user/:userId" component={UserDetail} exact /> */}
-                    <Route path="/message" component={Message} exact />
+
+                    {/* <Route path="/message" component={Message} exact /> */}
                     {/* <Route path="/socket/:uid" component={Socket} /> */}
                     <AuthenticatedRoute
                       path="/user/:userId"

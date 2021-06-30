@@ -19,6 +19,7 @@ import {
   PostData,
   renderPost,
 } from "pages/Home/Feeds";
+import { LoadingCube } from "pages/LoadingScreen/LoadingCube";
 
 interface SearchProps {}
 
@@ -130,6 +131,9 @@ const Search: React.FC<SearchProps> = ({}) => {
     getSearchData(params.searchContent);
     return () => {};
   }, []);
+  if (postSearchData === null || userSearchData === null) {
+    return <LoadingCube></LoadingCube>;
+  }
   return (
     <div className="Search">
       <div className="feedsHeader__container">

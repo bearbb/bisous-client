@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useContext, createContext } from "react";
+import React, {
+  useReducer,
+  useState,
+  useEffect,
+  useContext,
+  createContext,
+} from "react";
 import { Logo } from "pages/Header/Logo";
 import { Nav } from "pages/Header/Nav";
 import { Post, PostProps } from "./Post";
@@ -8,7 +14,8 @@ import { Utility } from "pages/Header/Utility";
 import "styles/Feed.css";
 import avatar from "styles/images/avatar.webp";
 import { LoadingScreen } from "pages/LoadingScreen/LoadingScreen";
-import { useHistory, withRouter } from "react-router-dom";
+import { LoadingCube } from "pages/LoadingScreen/LoadingCube";
+import { Redirect, useHistory, withRouter } from "react-router-dom";
 import LazyLoad from "react-lazyload";
 import axiosInstance from "Utility/axios";
 import { getFavoriteList } from "Utility/favorites";
@@ -55,7 +62,9 @@ const getPostsData = async (): Promise<PostData[]> => {
   }
   return postsData;
 };
-interface FeedsProps {}
+interface FeedsProps {
+  init: boolean;
+}
 export interface PostDataWithAvatar extends PostData {
   ownerAvatar: string;
 }
@@ -140,23 +149,25 @@ export const renderPost = (
   return <div className="Posts__container">{render}</div>;
 };
 
-const Feeds: React.FC<FeedsProps> = ({}) => {
+export const Feeds: React.FC<FeedsProps> = ({ init }) => {
   const history = useHistory();
   const { userData: ownerData, setUserData: setOwnerData } = useUserContext();
   const { followData: ownerFollowData, setFollowData: setOwnerFollowData } =
     useFollowContext();
   const { favoriteData, setFavoriteData } = useFavoriteContext();
   const [postCount, setPostCount] = useState<number>(0);
-  const [isFetching, setIsFetching] = useState<boolean>(true);
   const [toggleNewPost, setToggleNewPost] = useState<boolean>(false);
+  const [initSignal, setInitSignal] = useState<boolean | null>();
   useEffect(() => {
     console.log(ownerData);
-    return () => {};
+    setInitSignal(init);
+    FetchPostData();
+    getUserPosts();
   }, []);
   const [fetchPostDataSignal, setFetchPostDataSignal] =
     useState<boolean>(false);
   const [postsData, setPostsData] =
-    useState<PostDataWithAvatarAndInteractionStatus[]>();
+    useState<PostDataWithAvatarAndInteractionStatus[] | null>(null);
   //Get all owner data
   const getAllOwnerData = async () => {
     let [ownerData, ownerFollowData, ownerFavorites] = await Promise.all([
@@ -170,6 +181,7 @@ const Feeds: React.FC<FeedsProps> = ({}) => {
       ownerFavorites !== null
     ) {
       let ownerPostData = await getUserPostData(ownerData.userData.userId);
+      console.log(ownerPostData);
       if (ownerPostData !== null) {
         setPostCount(ownerPostData.postCount);
         setOwnerData({ ...ownerData.userData, isReady: true });
@@ -178,8 +190,13 @@ const Feeds: React.FC<FeedsProps> = ({}) => {
       }
     }
   };
+  const getUserPosts = async () => {
+    let ownerPostData = await getUserPostData(ownerData.userId);
+    if (ownerPostData !== null) {
+      setPostCount(ownerPostData.postCount);
+    }
+  };
   const FetchPostData = async () => {
-    setIsFetching(true);
     let data = await getPostsData();
     let data2 = await getAuthorsAvatar(data, ownerData.avatar);
     let data3 = await getLikedNSavedStatus(
@@ -190,13 +207,8 @@ const Feeds: React.FC<FeedsProps> = ({}) => {
     let data4 = await getImagesData(data3);
     setPostsData(data4);
     await sleep(300);
-    setIsFetching(false);
   };
   useEffect(() => {
-    (async () => {
-      // await getAllOwnerData();
-      await FetchPostData();
-    })();
     console.log(ownerData);
   }, []);
   useEffect(() => {
@@ -205,61 +217,68 @@ const Feeds: React.FC<FeedsProps> = ({}) => {
       setFetchPostDataSignal(false);
     }
   }, [fetchPostDataSignal]);
-  if (isFetching) {
-    return <LoadingScreen></LoadingScreen>;
+  if (ownerData.username === "") {
+    return <Redirect to="/login" exact></Redirect>;
   } else {
-    return (
-      <div className={`Feeds ${toggleNewPost ? "Feeds--flex" : ""}`}>
-        <div
-          className={`Feed__overlay ${
-            toggleNewPost ? "Feed__overlay--enabled" : "Feed__overlay--disabled"
-          }`}
-          onClick={() => setToggleNewPost(!toggleNewPost)}
-        ></div>
-        {toggleNewPost ? (
-          <NewPost
-            toggleNewPost={() => setToggleNewPost(!toggleNewPost)}
-            fetchNewPostData={() => setFetchPostDataSignal(true)}
-          ></NewPost>
-        ) : null}
-        <div className="feedsHeader__container">
-          <div className="headerFlex__container">
-            <Logo></Logo>
-            <SearchNNewPost
-              toggleNewPost={() => {
-                setToggleNewPost(!toggleNewPost);
-              }}
-            ></SearchNNewPost>
-            <Utility></Utility>
-          </div>
-        </div>
-        <div
-          className={`feedBody__container ${
-            toggleNewPost ? "feedBody__container--overlayed" : ""
-          }`}
-        >
-          <div className="leftSide__Nav--fixed">
-            <div className="feedsLeftSideNav__container">
-              <User
-                userAvatar={ownerData.avatar}
-                userName={ownerData.username}
-                name="displayName"
-                postCount={postCount}
-                followerCount={ownerFollowData.followerCount}
-                followingCount={ownerFollowData.followingCount}
-                userId={ownerData.userId}
-              ></User>
-              <Nav></Nav>
+    if (postsData === null) {
+      //TODO: return a skeleton loading posts
+      // return <LoadingCube></LoadingCube>;
+      return <div className="Loading">Loading</div>;
+    } else {
+      return (
+        <div className={`Feeds ${toggleNewPost ? "Feeds--flex" : ""}`}>
+          <div
+            className={`Feed__overlay ${
+              toggleNewPost
+                ? "Feed__overlay--enabled"
+                : "Feed__overlay--disabled"
+            }`}
+            onClick={() => setToggleNewPost(!toggleNewPost)}
+          ></div>
+          {toggleNewPost ? (
+            <NewPost
+              toggleNewPost={() => setToggleNewPost(!toggleNewPost)}
+              fetchNewPostData={() => setFetchPostDataSignal(true)}
+              avatarId={ownerData.avatar}
+            ></NewPost>
+          ) : null}
+          <div className="feedsHeader__container">
+            <div className="headerFlex__container">
+              <Logo></Logo>
+              <SearchNNewPost
+                toggleNewPost={() => {
+                  setToggleNewPost(!toggleNewPost);
+                }}
+              ></SearchNNewPost>
+              <Utility></Utility>
             </div>
           </div>
-          <div className="Posts">{renderPost(postsData)}</div>
-          <div className="feedRightSideTrending__container">
-            <h3>Trending</h3>
+          <div
+            className={`feedBody__container ${
+              toggleNewPost ? "feedBody__container--overlayed" : ""
+            }`}
+          >
+            <div className="leftSide__Nav--fixed">
+              <div className="feedsLeftSideNav__container">
+                <User
+                  userAvatar={ownerData.avatar}
+                  userName={ownerData.username}
+                  name="displayName"
+                  postCount={postCount}
+                  followerCount={ownerFollowData.followerCount}
+                  followingCount={ownerFollowData.followingCount}
+                  userId={ownerData.userId}
+                ></User>
+                <Nav></Nav>
+              </div>
+            </div>
+            <div className="Posts">{renderPost(postsData)}</div>
+            <div className="feedRightSideTrending__container">
+              {/* <h3>Trending</h3> */}
+            </div>
           </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 };
-
-export default withRouter(Feeds);

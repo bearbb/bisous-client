@@ -8,6 +8,7 @@ import { SearchNNewPost } from "pages/Header/SearchNNewPost";
 import { Utility } from "pages/Header/Utility";
 import axiosInstance from "Utility/axios";
 import "./EditProfile.css";
+import { LoadingCube } from "pages/LoadingScreen/LoadingCube";
 const FileImageIcon = faFileImage as IconProp;
 
 interface EditProfileProps {}
@@ -104,6 +105,9 @@ export const EditProfile: React.FC<EditProfileProps> = ({}) => {
     }
     return () => {};
   }, [isExceedSizeLimit]);
+  if (bio === null) {
+    return <LoadingCube></LoadingCube>;
+  }
   return (
     <div className="EditProfile">
       <div className="feedsHeader__container">

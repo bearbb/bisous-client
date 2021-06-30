@@ -33,13 +33,13 @@ const axiosLogin = async (data: UserCredential): Promise<loginRes> => {
     };
   }
 };
-export const Login: React.FC<LoginProps> = ({ history: his }) => {
+export const Login: React.FC<LoginProps> = ({}) => {
   const history = useHistory();
   const [userName, setUserName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [isLogin, setIsLogin] = useState<boolean>(false);
   const [credentialIsEmpty, setCredentialIsEmpty] = useState<boolean>(true);
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [loginSuccess, setLoginSuccess] = useState<boolean>(false);
   const [loginErr, setLoginErr] = useState<string>("");
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const userNameHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,7 +66,7 @@ export const Login: React.FC<LoginProps> = ({ history: his }) => {
     return true;
   };
   const navToSignUp = () => {
-    // history.push("/signup");
+    history.push("/signup");
   };
   const signInHandler = async () => {
     //TODO: fix after login and push new history, component not render
@@ -80,12 +80,14 @@ export const Login: React.FC<LoginProps> = ({ history: his }) => {
         setLoginErr(res.error.errorMsg);
       } else {
         // console.log(res.token);
-        // history.push("/");
-        his.push("/");
+        history.push("/");
+        window.location.reload();
+        // setLoginSuccess(true);
       }
-      setIsLogin(false);
       setPassword("");
-      passwordInputRef.current!.value = "";
+      if (passwordInputRef.current !== null) {
+        passwordInputRef.current.value = "";
+      }
     } catch (error) {
       console.error(error);
     }

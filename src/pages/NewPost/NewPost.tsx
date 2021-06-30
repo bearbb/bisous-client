@@ -10,6 +10,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import avatar from "styles/images/avatar.webp";
+import { ImgPrefix } from "Utility/avatar";
 
 const AddIcon = faPlusCircle as IconProp;
 const ClearIcon = faTimesCircle as IconProp;
@@ -22,11 +23,13 @@ const axiosInstance = axios.create({
 interface NewPostProps {
   toggleNewPost: () => void;
   fetchNewPostData: () => void;
+  avatarId: string;
 }
 
 export const NewPost: React.FC<NewPostProps> = ({
   toggleNewPost,
   fetchNewPostData,
+  avatarId,
 }) => {
   const captionInputRef = useRef<HTMLTextAreaElement>(null);
   const [caption, setCaption] = useState<string>("");
@@ -123,7 +126,11 @@ export const NewPost: React.FC<NewPostProps> = ({
       <div className="NP__container">
         <div className="npAvatarNCaption__container">
           <div className="npAvatar__container">
-            <img src={avatar} alt="" className="npAvatar__img" />
+            <img
+              src={`${ImgPrefix}/${avatarId}`}
+              alt=""
+              className="npAvatar__img avatar"
+            />
           </div>
           <div className="npCaption__container">
             <textarea
