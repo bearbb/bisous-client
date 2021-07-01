@@ -9,10 +9,10 @@ export const LoadingCube: React.FC<LoadingCubeProps> = ({}) => {
   const overwriteCssVariable = () => {
     let root = document.getElementById("root");
     let hueValue = randomHueValue();
-    console.log("changed");
+    // console.log("changed");
     if (root !== null) {
       root.style.setProperty("--hue", `${hueValue}`);
-      console.log(hueValue);
+      // console.log(hueValue);
     }
   };
   useEffect(() => {

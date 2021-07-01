@@ -181,3 +181,7 @@
   display: block;
   position: fixed;
 }
+.LoadingIcon {
+  size: 1.5rem;
+  color: #ff6347;
+}

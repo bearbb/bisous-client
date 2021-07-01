@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CommentData } from "pages/SinglePost/SinglePostPage";
+// import { CommentData } from "pages/SinglePost/SinglePostPage";
 const axiosInstance = axios.create({
   baseURL: "https://application.swanoogie.me/api",
   withCredentials: true,
@@ -13,7 +13,7 @@ const commentPost = async (postId: string, comment: string) => {
     });
     res = resp.data;
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res = error.response;
   }
   return res;

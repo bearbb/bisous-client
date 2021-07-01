@@ -10,7 +10,7 @@ const addPostToFavorite = async (postId: string) => {
     let resp = await axiosInstance.post("/favorites", { postIdList: [postId] });
     res = resp.data;
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     res = err.response;
   }
   return res;
@@ -21,7 +21,7 @@ const deletePostFromFavorite = async (postId: string) => {
     let resp = await axiosInstance.delete(`/favorites/${postId}`);
     res = resp.data;
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res = error.response;
   }
   return res;

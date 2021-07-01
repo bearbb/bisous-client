@@ -1,21 +1,13 @@
-import React, {
-  useReducer,
-  useState,
-  useEffect,
-  useContext,
-  createContext,
-} from "react";
+import React, { useState, useEffect } from "react";
 import { Logo } from "pages/Header/Logo";
 import { Nav } from "pages/Header/Nav";
-import { Post, PostProps } from "./Post";
+import { Post } from "./Post";
 import { SearchNNewPost } from "pages/Header/SearchNNewPost";
 import { User } from "pages/SideNav/User";
 import { Utility } from "pages/Header/Utility";
+import { faSpinner } from "@fortawesome/fontawesome-free-solid";
 import "styles/Feed.css";
-import avatar from "styles/images/avatar.webp";
-import { LoadingScreen } from "pages/LoadingScreen/LoadingScreen";
-import { LoadingCube } from "pages/LoadingScreen/LoadingCube";
-import { Redirect, useHistory, withRouter } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import LazyLoad from "react-lazyload";
 import axiosInstance from "Utility/axios";
 import { getFavoriteList } from "Utility/favorites";
@@ -24,9 +16,13 @@ import { NewPost } from "pages/NewPost/NewPost";
 import { useUserContext } from "Contexts/UserContext";
 import { useFollowContext } from "Contexts/FollowContext";
 import { useFavoriteContext } from "Contexts/FavoriteContext";
-import { getUserData, getOwnerData } from "Utility/user";
+import { getOwnerData } from "Utility/user";
 import { getOwnerFollowData } from "Utility/follow";
 import { getUserPostData } from "Utility/post";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+const LoadingIcon = faSpinner as IconProp;
 interface HashtagData {
   _id: string;
   hashtag: string;
@@ -49,7 +45,6 @@ export interface PostData {
   likes: string[];
   pictures: string[];
   updatedAt: string;
-  // avatar?: string;
 }
 const getPostsData = async (): Promise<PostData[]> => {
   let postsData: PostData[] = [];
@@ -126,11 +121,7 @@ export const renderPost = (
           <Post
             authorId={post.author._id}
             key={post._id}
-            authorAvatar={
-              post.author.avatar
-                ? `https://application.swanoogie.me/api/images/${post.author.avatar}`
-                : "https://application.swanoogie.me/api/images/60dac0a31fc8b842473cd857"
-            }
+            authorAvatar={`https://application.swanoogie.me/api/images/${post.author.avatar}`}
             postId={post._id}
             authorName={post.author.username}
             postImg={`https://application.swanoogie.me/api/images/${post.pictures[0]}`}
@@ -157,10 +148,8 @@ export const Feeds: React.FC<FeedsProps> = ({ init }) => {
   const { favoriteData, setFavoriteData } = useFavoriteContext();
   const [postCount, setPostCount] = useState<number>(0);
   const [toggleNewPost, setToggleNewPost] = useState<boolean>(false);
-  const [initSignal, setInitSignal] = useState<boolean | null>();
   useEffect(() => {
-    console.log(ownerData);
-    setInitSignal(init);
+    // console.log(ownerData);
     FetchPostData();
     getUserPosts();
   }, []);
@@ -181,7 +170,7 @@ export const Feeds: React.FC<FeedsProps> = ({ init }) => {
       ownerFavorites !== null
     ) {
       let ownerPostData = await getUserPostData(ownerData.userData.userId);
-      console.log(ownerPostData);
+      // console.log(ownerPostData);
       if (ownerPostData !== null) {
         setPostCount(ownerPostData.postCount);
         setOwnerData({ ...ownerData.userData, isReady: true });
@@ -209,7 +198,7 @@ export const Feeds: React.FC<FeedsProps> = ({ init }) => {
     await sleep(300);
   };
   useEffect(() => {
-    console.log(ownerData);
+    // console.log(ownerData);
   }, []);
   useEffect(() => {
     if (fetchPostDataSignal) {
@@ -223,7 +212,27 @@ export const Feeds: React.FC<FeedsProps> = ({ init }) => {
     if (postsData === null) {
       //TODO: return a skeleton loading posts
       // return <LoadingCube></LoadingCube>;
-      return <div className="Loading">Loading</div>;
+      return (
+        <div className="feedsHeader__container">
+          <div className="headerFlex__container">
+            <Logo></Logo>
+            <SearchNNewPost
+              toggleNewPost={() => {
+                setToggleNewPost(!toggleNewPost);
+              }}
+            ></SearchNNewPost>
+            <Utility></Utility>
+          </div>
+          <div className="feedBody__container">
+            <FontAwesomeIcon
+              icon={LoadingIcon}
+              size="2x"
+              spin
+              className="LoadingIcon"
+            ></FontAwesomeIcon>
+          </div>
+        </div>
+      );
     } else {
       return (
         <div className={`Feeds ${toggleNewPost ? "Feeds--flex" : ""}`}>

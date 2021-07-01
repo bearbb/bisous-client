@@ -89,7 +89,7 @@ export const Login: React.FC<LoginProps> = ({}) => {
         passwordInputRef.current.value = "";
       }
     } catch (error) {
-      console.error(error);
+      // console.error(error);
     }
     setIsFetching(false);
   };

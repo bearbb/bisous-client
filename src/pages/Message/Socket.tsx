@@ -11,7 +11,7 @@ const createSocket = async (id: string) => {
   let res = await axiosInstance.post(
     `https://application.swanoogie.me/api/messages/t/${id}`
   );
-  console.log(res);
+  // console.log(res);
 };
 interface Params {
   uid: string;
@@ -20,7 +20,7 @@ export const Socket: React.FC<SocketProps> = ({}) => {
   const params: Params = useParams();
   const socket = SocketIOClient("https://application.swanoogie.me");
   socket.on("chat-message", (msg) => {
-    console.log(msg);
+    // console.log(msg);
   });
   useEffect(() => {
     createSocket(params.uid);

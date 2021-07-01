@@ -127,7 +127,7 @@ const getAllData = async (userId: string) => {
     getUserData(userId),
   ]);
   let data2 = await getPostsFromPostList(data0.posts);
-  console.log(data3);
+  // console.log(data3);
   return { data0, data1, data2, data3 };
 };
 const isOwnPage = (ownId: string, paramsUserId: string) => {
@@ -161,7 +161,7 @@ export const UserDetail: React.FC<UserDetailProps> = ({}) => {
   });
   const [postsData, setPostsData] = useState<GetPostData[] | null>(null);
   const isOwner = isOwnPage(userData.userId, params.userId);
-  console.log(isOwner);
+  // console.log(isOwner);
   const [isFollowed, setIsFollowed] = useState<boolean>(false);
   const followHandler = async (isFollowed: boolean, userId: string) => {
     let res;
@@ -176,7 +176,7 @@ export const UserDetail: React.FC<UserDetailProps> = ({}) => {
         setIsFollowed(true);
       }
     }
-    console.log(res);
+    // console.log(res);
   };
   useEffect(() => {
     (async () => {
@@ -189,14 +189,14 @@ export const UserDetail: React.FC<UserDetailProps> = ({}) => {
       sleep(1);
       setIsFetching(false);
     })();
-    console.log("follow data:", followData);
+    // console.log("follow data:", followData);
     let followIndex = userFollowData.following.indexOf(params.userId);
     if (followIndex !== -1) {
       setIsFollowed(true);
     }
   }, []);
   useEffect(() => {
-    console.log(isFollowed);
+    // console.log(isFollowed);
     return () => {};
   }, [isFollowed]);
   const renderPostPreview = (data: GetPostData[]): React.ReactElement => {

@@ -1,21 +1,16 @@
-import React, { useState, useEffect, Component } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import { Login } from "pages/Login";
 import { Signup } from "pages/Signup";
-import {
-  Switch,
-  Route,
-  BrowserRouter as Router,
-  Redirect,
-} from "react-router-dom";
+import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
 import { Feeds } from "pages/Home/Feeds";
-import { Message } from "pages/Message/Message";
+// import { Message } from "pages/Message/Message";
 import { SinglePostPage } from "pages/SinglePost/SinglePostPage";
 import { UserDetail } from "pages/UserDetail/UserDetail";
-import { LoadingScreen } from "pages/LoadingScreen/LoadingScreen";
-import { NewPost } from "pages/NewPost/NewPost";
+// import { LoadingScreen } from "pages/LoadingScreen/LoadingScreen";
+// import { NewPost } from "pages/NewPost/NewPost";
 import { AuthenticatedRoute } from "pages/AuthenticatedRoute";
-import { Socket } from "pages/Message/Socket";
+// import { Socket } from "pages/Message/Socket";
 //import context
 import { UserContext, UserContent } from "Contexts/UserContext";
 import { FollowContext, FollowContent } from "Contexts/FollowContext";
@@ -25,18 +20,17 @@ import {
   LoginStatusContent,
 } from "Contexts/LoginStatusContenxt";
 import Search from "pages/Search/Search";
-import history from "Utility/history";
+// import history from "Utility/history";
 import { getFavoriteList } from "Utility/favorites";
-import { getFollowData, getOwnerFollowData } from "Utility/follow";
+import { getOwnerFollowData } from "Utility/follow";
 import { getLogInStatus, getOwnerData } from "Utility/user";
-import sleep from "Utility/sleep";
-import { getUserPostData } from "Utility/post";
+// import sleep from "Utility/sleep";
+// import { getUserPostData } from "Utility/post";
 import { EditProfile } from "pages/EditProfilePage/EditProfile";
-import { Home } from "pages/Home/Home";
+// import { Home } from "pages/Home/Home";
 import { LoadingCube } from "pages/LoadingScreen/LoadingCube";
 
 function App() {
-  let componentMounted = true;
   const [userData, setUserData] = useState<UserContent["userData"]>({
     username: "",
     avatar: "",
@@ -60,7 +54,7 @@ function App() {
     setLoginStatusData({ isLoggedIn: res });
     //User logged in
     if (res) {
-      console.log(res);
+      // console.log(res);
       await getAllOwnerData();
     } else {
       setUserData({ ...userData, isReady: true });
@@ -94,7 +88,7 @@ function App() {
   //   }
   // }, [loginStatusData]);
   useEffect(() => {
-    console.log(userData);
+    // console.log(userData);
     return () => {};
   }, [userData]);
   //Fetching for both data every refresh

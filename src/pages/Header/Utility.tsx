@@ -46,7 +46,7 @@ export const Utility: React.FC<UtilityProps> = ({}) => {
     if (res.success) {
       history.push("/login");
     } else {
-      console.log(res);
+      // console.log(res);
     }
   };
   const editProfileHandler = () => {

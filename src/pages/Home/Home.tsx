@@ -7,7 +7,6 @@ interface HomeProps {}
 export const Home: React.FC<HomeProps> = ({}) => {
   const forceUpdate = useReducer(() => ({}), {})[1] as () => void;
   useEffect(() => {
-    console.log("ss");
     forceUpdate();
     return () => {};
   }, []);

@@ -146,7 +146,7 @@ export const Post: React.FC<PostProps> = ({
         </div>
         <div className="postMore__container">
           <span className="post__more" onClick={moreHandler}>
-            <FontAwesomeIcon icon={MoreIcon} size="lg" />
+            <FontAwesomeIcon icon={MoreIcon} />
           </span>
         </div>
       </div>
@@ -199,7 +199,7 @@ export const Post: React.FC<PostProps> = ({
               <FontAwesomeIcon icon={FavoriteIcon} size="lg" />
             </span>
           )}
-          <span className="postIn4__save">{saveCount} save</span>
+          {/* <span className="postIn4__save">{saveCount} save</span> */}
         </div>
       </div>
       <div className="post__caption">

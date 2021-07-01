@@ -17,6 +17,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { likePost, unlikePost } from "Utility/like";
 import { commentPost } from "Utility/comment";
 import avatar from "styles/images/avatar.webp";
+import { useHistory } from "react-router";
 const HeartIcon = faHeart as IconProp;
 const HeartSolidIcon = faHeartSolid as IconProp;
 const CommentIcon = faComment as IconProp;
@@ -65,6 +66,7 @@ export const SinglePost: React.FC<GetPostData> = ({
   _id,
   shareOnClickHandler,
 }) => {
+  const history = useHistory();
   const [timeSinceCreated, setTimeSinceCreated] = useState<string>("");
   const [postLikeCount, setPostLikeCount] = useState<number>(likeCount);
   const [postIsLiked, setPostIsLiked] = useState<boolean>(isLiked);
@@ -76,6 +78,7 @@ export const SinglePost: React.FC<GetPostData> = ({
     setNewComment(event.target.value.toString());
   };
   useEffect(() => {
+    // console.log(comments);
     let temp = timeSince(createdAt);
     setTimeSinceCreated(temp);
     return () => {};
@@ -93,7 +96,7 @@ export const SinglePost: React.FC<GetPostData> = ({
     try {
       if (!newCommentIsEmpty) {
         let res = await commentPost(_id, newComment);
-        console.log(res);
+        // console.log(res);
         setCommentsList(res.post.comments);
         setNewComment("");
         newCommentInputRef.current!.value = "";
@@ -132,16 +135,23 @@ export const SinglePost: React.FC<GetPostData> = ({
   const saveHandler = () => {
     setIsSaved(!isSaved);
   };
+  const navToUserDetail = (userId: string) => {
+    history.push(`/user/${userId}`);
+  };
   const renderCommentList = (
-    commentData: CommentData[]
+    commentData: CommentData[],
+    navFunc: (userId: string) => void
   ): React.ReactElement => {
     //loop through all comments
     let render = commentData
       .slice(0)
       .reverse()
       .map((comment) => {
+        // console.log(comment.author._id);
         return (
           <Comment
+            authorId={comment.author._id}
+            navFunc={navFunc}
             key={comment._id}
             avatar={`https://application.swanoogie.me/api/images/${comment.author.avatar}`}
             content={comment.comment}
@@ -164,14 +174,24 @@ export const SinglePost: React.FC<GetPostData> = ({
           <div className="spDescription__container">
             <div className="spDescription__1th">
               <div className="spAuthor__container">
-                <div className="spAvatar__container">
+                <div
+                  className="spAvatar__container"
+                  onClick={() => {
+                    navToUserDetail(author._id);
+                  }}
+                >
                   <img
                     src={`https://application.swanoogie.me/api/images/${author.avatar}`}
                     alt=""
                     className="sp__avatar"
                   />
                 </div>
-                <div className="spUsername__container">
+                <div
+                  className="spUsername__container"
+                  onClick={() => {
+                    navToUserDetail(author._id);
+                  }}
+                >
                   <span className="sp__username">{author.username}</span>
                 </div>
               </div>
@@ -180,13 +200,15 @@ export const SinglePost: React.FC<GetPostData> = ({
                   {/* Render out caption as a comment element */}
                   <div className="spCaption__container">
                     <Comment
+                      authorId={author._id}
+                      navFunc={navToUserDetail}
                       avatar={`https://application.swanoogie.me/api/images/${author.avatar}`}
                       username={author.username}
                       content={caption}
                     />
                   </div>
                   {/*Function to render all comment out */}
-                  {renderCommentList(commentsList)}
+                  {renderCommentList(commentsList, navToUserDetail)}
                 </div>
               </div>
             </div>

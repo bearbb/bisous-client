@@ -121,6 +121,7 @@ export interface CommentData {
   author: {
     username: string;
     avatar: string;
+    _id: string;
   };
 }
 interface HashtagData {
@@ -199,6 +200,7 @@ export const SinglePostPage: React.FC<SinglePostPageProps> = ({}) => {
       }
       res.pictures = [imgUrl];
       res.shareOnClickHandler = shareOnClickHandler;
+      // console.log(res);
       setPostData(res);
       // console.log(res);
     })();

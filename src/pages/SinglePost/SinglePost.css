@@ -58,6 +58,7 @@
   height: 32px;
   border-radius: 50%;
   object-fit: cover;
+  cursor: pointer;
 }
 .spAuthor__container {
   display: flex;
@@ -73,6 +74,10 @@
 }
 .sp__username {
   font-weight: bold;
+  cursor: pointer;
+}
+.sp__username:hover {
+  text-decoration: underline;
 }
 
 .spComment__container {
@@ -166,6 +171,7 @@
   height: 32px;
   object-fit: cover;
   border-radius: 50%;
+  cursor: pointer;
 }
 .commentContent__container {
   text-align: left;
@@ -173,6 +179,10 @@
 }
 .comment__author {
   font-weight: bold;
+  cursor: pointer;
+}
+.comment__author:hover {
+  text-decoration: underline;
 }
 
 /* Share section */

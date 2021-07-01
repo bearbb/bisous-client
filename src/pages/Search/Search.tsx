@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from "react";
 import avatar from "styles/images/avatar.webp";
 import axiosInstance from "Utility/axios";
-import { useParams, withRouter } from "react-router-dom";
+import { useParams, withRouter, useHistory } from "react-router-dom";
 import { Logo } from "pages/Header/Logo";
-import { Nav } from "pages/Header/Nav";
-import { Post } from "pages/Home/Post";
 import { SearchNNewPost } from "pages/Header/SearchNNewPost";
-import { User } from "pages/SideNav/User";
 import { Utility } from "pages/Header/Utility";
-import { UserContext, useUserContext } from "Contexts/UserContext";
+import { useUserContext } from "Contexts/UserContext";
 import { useFavoriteContext } from "Contexts/FavoriteContext";
-// import { getLikedNSavedStatus } from "pages/Home/Feeds";
+import { ImgPrefix } from "Utility/avatar";
 import "./Search.css";
 import {
   getAuthorsAvatar,
@@ -27,32 +24,10 @@ interface SearchParams {
   searchContent: string;
 }
 interface PostDetailData extends PostDataWithAvatarAndInteractionStatus {}
-// let data: PostDetailData = {
-//   __v: 1,
-//   _id: "",
-//   author: {
-//     _id: "",
-//     username: "",
-//     email: "",
-//     avatar: "",
-//   },
-//   avatar: "",
-//   caption: "",
-//   commentCount: 0,
-//   comments: [""],
-//   createdAt: "",
-//   hashtags: [{ _id: "", hashtag: "" }],
-//   isLiked: false,
-//   isSaved: false,
-//   likeCount: 0,
-//   likes: [""],
-//   pictures: [""],
-//   updatedAt: "",
-// };
 interface UserData {
   username: string;
   userId: string;
-  avatar?: any;
+  avatar: any;
 }
 interface UserDataWithFollowerCount extends UserData {
   followerCount: number;
@@ -73,15 +48,34 @@ const getUserFollow = async (
   );
   return returnData;
 };
-const renderUser = (data: UserDataWithFollowerCount[]): React.ReactElement => {
+const renderUser = (
+  data: UserDataWithFollowerCount[],
+  navFunc: (d: string) => void
+): React.ReactElement => {
   let ren = data.map((user) => {
     return (
       <div className="UP__container" key={user.userId}>
-        <div className="UP__avatarContainer">
-          <img src={avatar} alt="" className="UP__avatar" />
+        <div
+          className="UP__avatarContainer"
+          onClick={() => {
+            navFunc(user.userId);
+          }}
+        >
+          <img
+            src={`${ImgPrefix}/${user.avatar}`}
+            alt=""
+            className="UP__avatar avatar"
+          />
         </div>
         <div className="UP__detailContainer">
-          <span className="UP__username">{user.username}</span>
+          <span
+            className="UP__username"
+            onClick={() => {
+              navFunc(user.userId);
+            }}
+          >
+            {user.username}
+          </span>
           <div className="UP__followCountContainer">
             <div className="UP__followerCountContainer">
               <span className="UP__followerCount">{`${user.followerCount} ${
@@ -102,6 +96,7 @@ const renderUser = (data: UserDataWithFollowerCount[]): React.ReactElement => {
   return <div className="UserPreview">{ren}</div>;
 };
 const Search: React.FC<SearchProps> = ({}) => {
+  const history = useHistory();
   const { userData, setUserData } = useUserContext();
   const { favoriteData, setFavoriteData } = useFavoriteContext();
   const [postSearchData, setPostSearchData] =
@@ -131,6 +126,9 @@ const Search: React.FC<SearchProps> = ({}) => {
     getSearchData(params.searchContent);
     return () => {};
   }, []);
+  const navToUserDetailPage = (userId: string) => {
+    history.push(`/user/${userId}`);
+  };
   if (postSearchData === null || userSearchData === null) {
     return <LoadingCube></LoadingCube>;
   }
@@ -159,7 +157,7 @@ const Search: React.FC<SearchProps> = ({}) => {
               </span>
             </div>
           ) : (
-            renderUser(userSearchData)
+            renderUser(userSearchData, navToUserDetailPage)
           )}
         </div>
         <div className="postSearch__container">

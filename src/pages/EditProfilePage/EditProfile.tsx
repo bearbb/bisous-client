@@ -1,15 +1,15 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useUserContext } from "Contexts/UserContext";
-import { faFileImage } from "@fortawesome/fontawesome-free-solid";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
+// import { faFileImage } from "@fortawesome/fontawesome-free-solid";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { Logo } from "pages/Header/Logo";
 import { SearchNNewPost } from "pages/Header/SearchNNewPost";
 import { Utility } from "pages/Header/Utility";
 import axiosInstance from "Utility/axios";
 import "./EditProfile.css";
 import { LoadingCube } from "pages/LoadingScreen/LoadingCube";
-const FileImageIcon = faFileImage as IconProp;
+// const FileImageIcon = faFileImage as IconProp;
 
 interface EditProfileProps {}
 
@@ -34,7 +34,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({}) => {
     getUserBio(userData.userId);
   }, []);
   useEffect(() => {
-    console.log(imageData);
+    // console.log(imageData);
     return () => {};
   }, [imageData]);
   const avatarOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,34 +57,34 @@ export const EditProfile: React.FC<EditProfileProps> = ({}) => {
   };
   const updateBio = async (bio: string) => {
     let res = await axiosInstance.post(`/users/bio`, { bio });
-    console.log(res);
+    // console.log(res);
     getUserBio(userData.userId);
   };
   const updateAvatar = async () => {
     try {
       //upload img first
       let imgData = new FormData();
-      console.log(imgData);
+      // console.log(imgData);
       if (imageData) {
         imgData.append("imageFile", imageData);
       }
-      console.log(imgData);
+      // console.log(imgData);
       let resp = await axiosInstance.post("/images", imgData);
       let imgId = resp.data.imageId;
       //update avatar by new image id
       let updateAvaRes = await axiosInstance.post("/users/avatar", {
         imageId: imgId,
       });
-      console.log(updateAvaRes);
+      // console.log(updateAvaRes);
     } catch (err) {
-      console.error(err);
+      // console.error(err);
     }
   };
   const submitHandler = async () => {
     //check if bio have change
     if (bio !== null && initBio !== null) {
       if (bio === initBio) {
-        console.log("nothing have changed");
+        // console.log("nothing have changed");
       }
       //bio changed
       else {
@@ -94,7 +94,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({}) => {
     if (imageData) {
       await updateAvatar();
     } else {
-      console.log("image not change");
+      // console.log("image not change");
     }
   };
   useEffect(() => {

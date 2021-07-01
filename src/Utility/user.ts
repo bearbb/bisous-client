@@ -21,10 +21,10 @@ const getOwnerData = async (): Promise<GetUserData | null> => {
       },
     };
   } catch (error) {
-    console.log("Unauthorized");
+    // console.log("Unauthorized");
     // console.error(error);
     if (error.response) {
-      console.log(error.response);
+      // console.log(error.response);
     }
     return null;
   }
