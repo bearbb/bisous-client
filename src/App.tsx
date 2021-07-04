@@ -29,6 +29,7 @@ import { getLogInStatus, getOwnerData } from "Utility/user";
 import { EditProfile } from "pages/EditProfilePage/EditProfile";
 // import { Home } from "pages/Home/Home";
 import { LoadingCube } from "pages/LoadingScreen/LoadingCube";
+import { NotFound } from "pages/404Page/NotFound";
 
 function App() {
   const [userData, setUserData] = useState<UserContent["userData"]>({
@@ -137,6 +138,7 @@ function App() {
                       Component={EditProfile}
                     ></AuthenticatedRoute>
                     <AuthenticatedRoute path="/" Component={Feeds} />
+                    {/* <Route component={NotFound}></Route> */}
                   </UserContext.Provider>
                 </FollowContext.Provider>
               </FavoriteContext.Provider>
