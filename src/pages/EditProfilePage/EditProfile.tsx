@@ -131,7 +131,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({}) => {
               />
             </div>
             <div className="ep__avatarChangerContainer">
-              <span className="ep__userName">swanoogie</span>
+              <span className="ep__userName">{userData.username}</span>
               <span className="ep__editButton" onClick={() => addImgHandler()}>
                 Change Avatar
               </span>
