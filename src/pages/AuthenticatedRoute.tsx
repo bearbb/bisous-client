@@ -5,11 +5,13 @@ import { useLoginStatusContext } from "Contexts/LoginStatusContenxt";
 
 interface AuthenticatedRouteProps {
   path: string;
+  isExact: boolean;
   Component: any;
   renderFunc?: () => React.ReactElement;
 }
 
 export const AuthenticatedRoute: React.FC<AuthenticatedRouteProps> = ({
+  isExact,
   Component,
   path,
   renderFunc,
@@ -20,7 +22,7 @@ export const AuthenticatedRoute: React.FC<AuthenticatedRouteProps> = ({
   const { loginStatusData } = useLoginStatusContext();
   if (loginStatusData.isLoggedIn) {
     if (renderFunc === undefined) {
-      return <Route component={Component} path={path} exact></Route>;
+      return <Route component={Component} path={path} exact={isExact}></Route>;
     } else {
       return <Route path={path} render={() => renderFunc()}></Route>;
     }

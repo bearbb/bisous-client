@@ -1,15 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useUserContext } from "Contexts/UserContext";
-// import { faFileImage } from "@fortawesome/fontawesome-free-solid";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { Logo } from "pages/Header/Logo";
 import { SearchNNewPost } from "pages/Header/SearchNNewPost";
 import { Utility } from "pages/Header/Utility";
 import axiosInstance from "Utility/axios";
 import "./EditProfile.css";
 import { LoadingCube } from "pages/LoadingScreen/LoadingCube";
-// const FileImageIcon = faFileImage as IconProp;
 
 interface EditProfileProps {}
 

@@ -4,14 +4,10 @@ import { Login } from "pages/Login";
 import { Signup } from "pages/Signup";
 import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
 import { Feeds } from "pages/Home/Feeds";
-// import { Message } from "pages/Message/Message";
 import { SinglePostPage } from "pages/SinglePost/SinglePostPage";
 import { UserDetail } from "pages/UserDetail/UserDetail";
-// import { LoadingScreen } from "pages/LoadingScreen/LoadingScreen";
-// import { NewPost } from "pages/NewPost/NewPost";
+import { Message } from "pages/Message/Message";
 import { AuthenticatedRoute } from "pages/AuthenticatedRoute";
-// import { Socket } from "pages/Message/Socket";
-//import context
 import { UserContext, UserContent } from "Contexts/UserContext";
 import { FollowContext, FollowContent } from "Contexts/FollowContext";
 import { FavoriteContent, FavoriteContext } from "Contexts/FavoriteContext";
@@ -19,19 +15,22 @@ import {
   LoginStatusContext,
   LoginStatusContent,
 } from "Contexts/LoginStatusContenxt";
+//socket context
+import {
+  SocketContext,
+  useSocketContext,
+  socket,
+} from "Contexts/SocketContext";
+
 import Search from "pages/Search/Search";
-// import history from "Utility/history";
 import { getFavoriteList } from "Utility/favorites";
 import { getOwnerFollowData } from "Utility/follow";
 import { getLogInStatus, getOwnerData } from "Utility/user";
-// import sleep from "Utility/sleep";
-// import { getUserPostData } from "Utility/post";
 import { EditProfile } from "pages/EditProfilePage/EditProfile";
-// import { Home } from "pages/Home/Home";
 import { LoadingCube } from "pages/LoadingScreen/LoadingCube";
-import { NotFound } from "pages/404Page/NotFound";
 
 function App() {
+  const [socketRoomJoined, setSocketRoomJoined] = useState<boolean>(false);
   const [userData, setUserData] = useState<UserContent["userData"]>({
     username: "",
     avatar: "",
@@ -79,20 +78,48 @@ function App() {
   };
   useEffect(() => {
     getLoggedInStatus();
+    getAllOwnerData();
   }, []);
-  // useEffect(() => {
-  //   console.log(loginStatusData);
-  //   if (loginStatusData.isLoggedIn) {
-  //     getAllOwnerData();
-  //   } else {
-  //     setUserData({ ...userData, isReady: false });
-  //   }
-  // }, [loginStatusData]);
+
+  //joined handle
+  const socketRoomJoinedSuccess = () => {
+    console.log(
+      `%cSocket connect n join room successfully`,
+      "background: #292d3e; color: #f07178; font-weight: bold"
+    );
+    setSocketRoomJoined(true);
+  };
+
+  //Connect to socket
   useEffect(() => {
-    // console.log(userData);
-    return () => {};
-  }, [userData]);
-  //Fetching for both data every refresh
+    //check if joined
+    if (!socketRoomJoined && userData.userId) {
+      console.log(
+        `%cConnecting to socket`,
+        "background: #292d3e; color: #f07178; font-weight: bold"
+      );
+      socket.connect();
+    }
+    socket.on("connect", () => {
+      console.log(
+        `%c${userData.userId}`,
+        "background: #292d3e; color: #f07178; font-weight: bold"
+      );
+      socket.emit("authenticateFromClient", { uid: userData.userId });
+    });
+    //listen on joined
+    socket.on("roomJoined", socketRoomJoinedSuccess);
+    //listen on receive message
+    return () => {
+      socket.off("roomJoined", socketRoomJoinedSuccess);
+    };
+  }, [userData.userId]);
+  // useEffect(() => {
+  //   console.log("follow data ------");
+  //   console.log(followData);
+  //   return () => {};
+  // }, [followData]);
+  //TODO: Fetching for both data every refresh
   const [favoriteData, setFavoriteData] = useState<
     FavoriteContent["favoriteData"]
   >({
@@ -108,76 +135,50 @@ function App() {
             <LoginStatusContext.Provider
               value={{ loginStatusData, setLoginStatusData }}
             >
-              <FavoriteContext.Provider
-                value={{ favoriteData, setFavoriteData }}
-              >
-                <FollowContext.Provider value={{ followData, setFollowData }}>
-                  <UserContext.Provider value={{ userData, setUserData }}>
-                    <Route path="/login" exact component={Login} />
-                    <Route path="/signup" exact component={Signup} />
-                    {/* <Route path="/p/:postId" component={SinglePostPage} /> */}
-                    <AuthenticatedRoute
-                      path="/p/:postId"
-                      Component={SinglePostPage}
-                    />
-                    {/* <Route path="/user/:userId" component={UserDetail} exact /> */}
-
-                    {/* <Route path="/message" component={Message} exact /> */}
-                    {/* <Route path="/socket/:uid" component={Socket} /> */}
-                    <AuthenticatedRoute
-                      path="/user/:userId"
-                      Component={UserDetail}
-                    />
-                    <AuthenticatedRoute
-                      path="/search/:searchContent"
-                      Component={Search}
-                      renderFunc={() => <Search key={Date.now()}></Search>}
-                    />
-                    <AuthenticatedRoute
-                      path="/profile/edit"
-                      Component={EditProfile}
-                    ></AuthenticatedRoute>
-                    <AuthenticatedRoute path="/" Component={Feeds} />
-                    {/* <Route component={NotFound}></Route> */}
-                  </UserContext.Provider>
-                </FollowContext.Provider>
-              </FavoriteContext.Provider>
+              <SocketContext.Provider value={socket}>
+                <FavoriteContext.Provider
+                  value={{ favoriteData, setFavoriteData }}
+                >
+                  <FollowContext.Provider value={{ followData, setFollowData }}>
+                    <UserContext.Provider value={{ userData, setUserData }}>
+                      <Route path="/login" exact component={Login} />
+                      <Route path="/signup" exact component={Signup} />
+                      <AuthenticatedRoute
+                        path="/p/:postId"
+                        Component={SinglePostPage}
+                        isExact={true}
+                      />
+                      <AuthenticatedRoute
+                        isExact={true}
+                        path="/user/:userId"
+                        Component={UserDetail}
+                      />
+                      <AuthenticatedRoute
+                        isExact={true}
+                        path="/search/:searchContent"
+                        Component={Search}
+                        renderFunc={() => <Search key={Date.now()}></Search>}
+                      />
+                      <AuthenticatedRoute
+                        isExact={true}
+                        path="/profile/edit"
+                        Component={EditProfile}
+                      ></AuthenticatedRoute>
+                      <AuthenticatedRoute
+                        isExact={false}
+                        path="/direct"
+                        Component={Message}
+                      ></AuthenticatedRoute>
+                      <AuthenticatedRoute
+                        isExact={true}
+                        path="/"
+                        Component={Feeds}
+                      />
+                    </UserContext.Provider>
+                  </FollowContext.Provider>
+                </FavoriteContext.Provider>
+              </SocketContext.Provider>
             </LoginStatusContext.Provider>
-            {/* <AuthenticatedRoute path="/p/:postId" Component={SinglePostPage} /> */}
-            {/* <Route path="/signup" exact component={Signup}></Route>
-          <Route path="/login" exact component={Login}></Route>
-          <Route
-            path="/"
-            exact
-            render={() => (isLoggedIn ? <Feeds /> : <Redirect to="/login" />)}
-          ></Route>
-          <Route
-            path="/message"
-            exact
-            render={() => (isLoggedIn ? <Message /> : <Redirect to="/login" />)}
-          />
-          <Route
-            path="/p/:postId"
-            exact
-            render={() =>
-              isLoggedIn ? <SinglePostPage /> : <Redirect to="/login" />
-            }
-          />
-          <Route
-            path="/user"
-            exact
-            render={() =>
-              isLoggedIn ? <UserDetail /> : <Redirect to="/login" />
-            }
-          />
-          <Route
-            path="/loading"
-            exact
-            render={() =>
-              isLoggedIn ? <UserDetail /> : <Redirect to="/login" />
-            }
-          />
-          <Route path="/upload" exact component={NewPost} /> */}
           </Switch>
         </div>
       </Router>

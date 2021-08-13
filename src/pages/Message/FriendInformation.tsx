@@ -27,7 +27,7 @@ export const FriendInformation: React.FC<FriendInformationProps> = ({
     <div
       className={`FriendInformation ${friendId} ${customClass}`}
       onClick={() => {
-        onClickHandler({ friendId, friendName, friendAvatar });
+        onClickHandler(friendId, friendName, friendAvatar);
       }}
     >
       <div className="FriendInformation__avatarContainer">

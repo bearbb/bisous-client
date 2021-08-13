@@ -1,7 +1,6 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import "../../styles/Feed__user.css";
-import avatar from "../../styles/images/avatar.webp";
 
 interface UserProps {
   userAvatar: string;

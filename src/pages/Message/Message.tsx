@@ -1,18 +1,30 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { Logo } from "pages/Header/Logo";
 import { SearchNNewPost } from "pages/Header/SearchNNewPost";
 import { Utility } from "pages/Header/Utility";
 import { Chat } from "pages/Message/Chat";
 import "styles/Message.css";
 import avatar from "styles/images/avatar.webp";
-import SocketIOClient from "socket.io-client";
+// import io from "socket.io-client";
+import axiosInstance from "Utility/axios";
+import { useHistory } from "react-router-dom";
 
 import { FriendInformation } from "pages/Message/FriendInformation";
+import { EmptyChatBox } from "pages/Message/EmptyChatBox";
+import { useFollowContext } from "Contexts/FollowContext";
+import { useUserContext } from "Contexts/UserContext";
+import { useSocketContext } from "Contexts/SocketContext";
+import { join } from "path";
 
 export interface friendData {
   friendName: string;
   friendId: string;
   friendAvatar: string;
+}
+interface FriendData {
+  username: string;
+  avatar: string;
+  userId: string;
 }
 interface messageInitData {
   userName: string;
@@ -21,249 +33,147 @@ interface messageInitData {
 
 interface MessageProps {}
 
+const imgUrlPrefix = "https://application.swanoogie.me/api/images/";
+// const socket = io("https://swanoogie.me", { autoConnect: false });
+const fetchFriendData = async (
+  followingList: string[]
+): Promise<FriendData[]> => {
+  console.log(followingList);
+  if (followingList[0] === "") {
+    return [];
+  } else {
+    let friendsData: FriendData[] = await Promise.all(
+      followingList.map(async (followingId) => {
+        let data = await axiosInstance.get(`/users/${followingId}`);
+        return {
+          username: data.data.userDoc.username,
+          avatar: data.data.userDoc.avatar,
+          userId: followingId,
+        };
+      })
+    );
+    return friendsData;
+  }
+};
+
 export const Message: React.FC<MessageProps> = ({}) => {
-  const Data: messageInitData = {
-    userName: "BearBB",
-    friendList: [
+  const { followData: userFollowData, setFollowData: setUserFollowData } =
+    useFollowContext();
+  const { userData, setUserData } = useUserContext();
+  const socket = useSocketContext();
+  const [currentUser, setCurrentUser] = useState<string>(userData.username);
+  const [currentChatLog, setCurrentChatLog] =
+    useState<Array<MessageData> | null>([
       {
-        friendName: "UnUn",
-        friendId: "fr01",
-        friendAvatar: avatar,
+        sender: { userId: "60f39b3ffddbdd31da2ffe39", username: "bearbb2" },
+        receiver: { userId: "60dd3d65784646034844a4e5" },
+        message: "b1",
+        createdAt: "1628846936805",
       },
-      {
-        friendId: "fr02",
-        friendName: "hoa__nt",
-        friendAvatar: avatar,
-      },
-      {
-        friendId: "fr03",
-        friendName: "hoa__nt1",
-        friendAvatar: avatar,
-      },
-      {
-        friendId: "fr04",
-        friendName: "hoa__nt2",
-        friendAvatar: avatar,
-      },
-      {
-        friendId: "fr05",
-        friendName: "hoa__nt3",
-        friendAvatar: avatar,
-      },
-      {
-        friendId: "fr06",
-        friendName: "hoa__nt4",
-        friendAvatar: avatar,
-      },
-      {
-        friendId: "fr07",
-        friendName: "hoa__nt5",
-        friendAvatar: avatar,
-      },
-      {
-        friendId: "fr08",
-        friendName: "hoa__nt6",
-        friendAvatar: avatar,
-      },
-      {
-        friendId: "fr09",
-        friendName: "hoa__nt7",
-        friendAvatar: avatar,
-      },
-      {
-        friendId: "fr10",
-        friendName: "hoa__nt8",
-        friendAvatar: avatar,
-      },
-      {
-        friendId: "fr12",
-        friendName: "hoa__nt9",
-        friendAvatar: avatar,
-      },
-      {
-        friendId: "fr13",
-        friendName: "hoa__nt10",
-        friendAvatar: avatar,
-      },
-      {
-        friendId: "fr14",
-        friendName: "hoa__nt11",
-        friendAvatar: avatar,
-      },
-      {
-        friendId: "fr15",
-        friendName: "hoa__nt12",
-        friendAvatar: avatar,
-      },
-      {
-        friendId: "fr16",
-        friendName: "hoa__nt13",
-        friendAvatar: avatar,
-      },
-      {
-        friendId: "fr17",
-        friendName: "hoa__nt14",
-        friendAvatar: avatar,
-      },
-    ],
+    ]);
+  const newMessageTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const history = useHistory();
+  const [friendsData, setFriendsData] = useState<FriendData[] | null>(null);
+
+  const updateCurrentChatLog = (newChatData: MessageData) => {
+    console.log(
+      `%c currentChatLog`,
+      "background: #292d3e; color: #f07178; font-weight: bold"
+    );
+    console.log(currentChatLog);
+    if (currentChatLog === null) {
+      setCurrentChatLog([newChatData]);
+    } else {
+      let temp = [...currentChatLog, newChatData];
+      console.log(
+        `%cCurrent chat log after changed`,
+        "background: #292d3e; color: #f07178; font-weight: bold"
+      );
+      console.log(temp);
+      setCurrentChatLog(temp);
+    }
+    // console.log("after chat log: ", currentChatLog);
   };
+  useEffect(() => {
+    socket.on("incomingMessage", (data) => {
+      let temp = { ...data, createdAt: Date.now().toString() };
+      console.log(temp);
+      updateCurrentChatLog(temp);
+    });
+    return () => {
+      socket.off("incomingMessage");
+    };
+  }, [socket, currentChatLog]);
+  //emit on sending message
+  const emitMessage = (receiverId: string, msgContent: string) => {
+    let temp: MessageData = {
+      sender: {
+        userId: userData.userId,
+        username: userData.username,
+      },
+      receiver: { userId: receiverId },
+      message: msgContent,
+      createdAt: Date.now().toString(),
+    };
+    socket.emit("privateMessage", temp);
+    updateCurrentChatLog(temp);
+  };
+
+  useEffect(() => {
+    (async () => {
+      //check if followList empty
+      if (userFollowData.following !== [""]) {
+        //fetching all following users
+        let temp = await fetchFriendData(userFollowData.following);
+        setFriendsData(temp);
+      }
+    })();
+  }, [userFollowData]);
   interface MessageData {
     message: string;
     sender: {
       username: string;
-      // userId: string
+      userId: string;
     };
     receiver: {
-      username: string;
+      // username: string;
+      userId: string;
     };
     createdAt: string;
   }
-  // type MessageLog
-  const MessagesData = [
-    {
-      message: "high hope",
-      sender: {
-        username: "bearbb",
-        //TODO: change from server to send back userId too
-      },
-      receiver: {
-        username: "swaggie",
-      },
-      createdAt: "2021-04-22T05:10:44.195Z",
-    },
-    {
-      message: "high hope 2 asdacasdawnmnmawucaiwlcallwklaksldkascnajsjwuacj",
-      sender: {
-        username: "swaggie",
-        //TODO: change from server to send back userId too
-      },
-      receiver: {
-        username: "bearbb",
-      },
-      createdAt: "2021-04-22T05:10:47.195Z",
-    },
-    {
-      message: "high hope 2 asdacasdawnmnmawucaiwlcallwklaksldkascnajsjwuacj",
-      sender: {
-        username: "swaggie",
-        //TODO: change from server to send back userId too
-      },
-      receiver: {
-        username: "bearbb",
-      },
-      createdAt: "2021-04-22T05:10:47.195Z",
-    },
-    {
-      message: "high hope 2 asdacasdawnmnmawucaiwlcallwklaksldkascnajsjwuacj",
-      sender: {
-        username: "swaggie",
-        //TODO: change from server to send back userId too
-      },
-      receiver: {
-        username: "bearbb",
-      },
-      createdAt: "2021-04-22T05:10:47.195Z",
-    },
-    {
-      message: "high hope 2 asdacasdawnmnmawucaiwlcallwklaksldkascnajsjwuacj",
-      sender: {
-        username: "swaggie",
-        //TODO: change from server to send back userId too
-      },
-      receiver: {
-        username: "bearbb",
-      },
-      createdAt: "2021-04-22T05:10:47.195Z",
-    },
-    {
-      message: "high hope 2 asdacasdawnmnmawucaiwlcallwklaksldkascnajsjwuacj",
-      sender: {
-        username: "swaggie",
-        //TODO: change from server to send back userId too
-      },
-      receiver: {
-        username: "bearbb",
-      },
-      createdAt: "2021-04-22T05:10:47.195Z",
-    },
-    {
-      message: "high hope 2 asdacasdawnmnmawucaiwlcallwklaksldkascnajsjwuacj",
-      sender: {
-        username: "swaggie",
-        //TODO: change from server to send back userId too
-      },
-      receiver: {
-        username: "bearbb",
-      },
-      createdAt: "2021-04-22T05:10:47.195Z",
-    },
-    {
-      message: "high hope 2 asdacasdawnmnmawucaiwlcallwklaksldkascnajsjwuacj",
-      sender: {
-        username: "swaggie",
-        //TODO: change from server to send back userId too
-      },
-      receiver: {
-        username: "bearbb",
-      },
-      createdAt: "2021-04-22T05:10:47.195Z",
-    },
-    {
-      message: "high hope 2 asdacasdawnmnmawucaiwlcallwklaksldkascnajsjwuacj",
-      sender: {
-        username: "swaggie",
-        //TODO: change from server to send back userId too
-      },
-      receiver: {
-        username: "bearbb",
-      },
-      createdAt: "2021-04-22T05:10:47.195Z",
-    },
-    {
-      message: "high hope 2 asdacasdawnmnmawucaiwlcallwklaksldkascnajsjwuacj",
-      sender: {
-        username: "swaggie",
-        //TODO: change from server to send back userId too
-      },
-      receiver: {
-        username: "bearbb",
-      },
-      createdAt: "2021-04-22T05:10:47.195Z",
-    },
-  ];
-  const [currentFriend, setCurrentFriend] = useState<friendData>(
-    Data.friendList[0]
-  );
-  const currentFriendHandler = (data: any) => {
+  const [currentFriend, setCurrentFriend] = useState<FriendData | null>(null);
+  const currentFriendHandler = (
+    friendId: string,
+    friendName: string,
+    friendAvatar: string
+  ) => {
     //delete pre active class on pre currentFriend
-    let preDoc = document.getElementsByClassName(currentFriend.friendId)[0];
-    // console.log(preDoc);
-    preDoc.classList.remove("currentFriend__container--active");
-    // console.log(preDoc);
+    if (currentFriend !== null) {
+      let preDoc = document.getElementsByClassName(currentFriend.userId)[0];
+      preDoc.classList.remove("currentFriend__container--active");
+    }
     //set current friend on that friend
-    setCurrentFriend(data);
+    setCurrentFriend({
+      userId: friendId,
+      username: friendName,
+      avatar: friendAvatar,
+    });
     //add currentFriend__container--active to that html element
-    let doc = document.getElementsByClassName(data.friendId)[0];
+    let doc = document.getElementsByClassName(friendId)[0];
     doc.classList.add("currentFriend__container--active");
+    history.push(`/direct/t/${friendId}`);
   };
-  const nullOnclickHandler = () => {
-    // console.log(
-    //   `%cDO NOTHING`,
-    //   "background: #292d3e; color: #f07178; font-weight: bold"
-    // );
-  };
-  const [currentUser, setCurrentUser] = useState<string>("bearbb");
-  const [currentChatLog, setCurrentChatLog] =
-    useState<Array<MessageData>>(MessagesData);
+  const nullOnclickHandler = () => {};
   const [newMessage, setNewMessage] = useState<string>("");
   const [newMessageIsEmpty, setNewMessageIsEmpty] = useState<boolean>(true);
-  const ListingFriend = (friendsData: friendData[]): React.ReactElement => {
+  const ListingFriend = (friendsData: FriendData[]): React.ReactElement => {
     let friendList = friendsData.map((friendData) => {
       return (
         <FriendInformation
-          friendAvatar={friendData.friendAvatar}
-          friendId={friendData.friendId}
-          friendName={friendData.friendName}
+          key={friendData.userId}
+          friendAvatar={`${imgUrlPrefix}${friendData.avatar}`}
+          friendId={friendData.userId}
+          friendName={friendData.username}
           //TODO: add onClick attribute
           onClickHandler={currentFriendHandler}
           customClass="friendList--realShit"
@@ -278,7 +188,20 @@ export const Message: React.FC<MessageProps> = ({}) => {
     setNewMessage(event.target.value.toString());
   };
   const newMessageSubmitHandler = () => {
-    //TODO: Scroll to last message when submit a message to server
+    if (currentFriend !== null) {
+      emitMessage(currentFriend.userId, newMessage);
+      scrollToLastMessage();
+    }
+    //clear the new message input
+    if (newMessageTextareaRef.current !== null) {
+      newMessageTextareaRef.current.value = "";
+      setNewMessage("");
+    }
+  };
+  const onEnterPress = async (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter") {
+      newMessageSubmitHandler();
+    }
   };
   const lastMessageRef = useRef<HTMLLIElement | null>(null);
   const renderChatLog = (data: MessageData[]): React.ReactElement => {
@@ -289,30 +212,46 @@ export const Message: React.FC<MessageProps> = ({}) => {
     let dataLength = data.length;
     for (let i = 0; i < dataLength; i++) {
       if (i !== dataLength - 1) {
-        if (data[i].sender.username === currentUser) {
+        if (data[i].sender.userId === userData.userId) {
           ChatLogs.push(
-            <li className="outcoming">
-              <Chat message={data[i].message} isIncoming={false}></Chat>
+            <li className="outgoing">
+              <Chat
+                message={data[i].message}
+                isIncoming={false}
+                key={data[i].createdAt}
+              ></Chat>
             </li>
           );
         } else {
           ChatLogs.push(
             <li className="incoming">
-              <Chat message={data[i].message} isIncoming={true}></Chat>
+              <Chat
+                message={data[i].message}
+                isIncoming={true}
+                key={data[i].createdAt}
+              ></Chat>
             </li>
           );
         }
       } else {
-        if (data[i].sender.username === currentUser) {
+        if (data[i].sender.userId === userData.userId) {
           ChatLogs.push(
-            <li className="outcoming" ref={lastMessageRef}>
-              <Chat message={data[i].message} isIncoming={false}></Chat>
+            <li className="outgoing" ref={lastMessageRef}>
+              <Chat
+                message={data[i].message}
+                isIncoming={false}
+                key={data[i].createdAt}
+              ></Chat>
             </li>
           );
         } else {
           ChatLogs.push(
             <li className="incoming" ref={lastMessageRef}>
-              <Chat message={data[i].message} isIncoming={true}></Chat>
+              <Chat
+                message={data[i].message}
+                isIncoming={true}
+                key={data[i].createdAt}
+              ></Chat>
             </li>
           );
         }
@@ -324,10 +263,6 @@ export const Message: React.FC<MessageProps> = ({}) => {
     lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
   };
   useEffect(() => {
-    // const socket = SocketIOClient("https://application.swanoogie.me");
-    return () => {};
-  }, []);
-  useEffect(() => {
     if (newMessage == "") {
       setNewMessageIsEmpty(true);
     } else {
@@ -336,7 +271,7 @@ export const Message: React.FC<MessageProps> = ({}) => {
   }, [newMessage]);
   //Scroll to the very end message when render out msg
   useEffect(() => {
-    lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+    scrollToLastMessage();
   }, []);
 
   return (
@@ -351,14 +286,14 @@ export const Message: React.FC<MessageProps> = ({}) => {
       <div className="messageBody__container">
         <div className="friendList__container">
           <div className="friendList__userNameContainer">
-            <span className="friendList__userName">{Data.userName}</span>
+            <span className="friendList__userName">{userData.username}</span>
           </div>
           <div className="friendList__listContainer">
             <div className="friendList__descriptionContainer">
-              <span className="friendList__description">Messages</span>
+              <span className="friendList__description">Friends</span>
             </div>
             <div className="friendList__lists">
-              {ListingFriend(Data.friendList)}
+              {friendsData !== null ? ListingFriend(friendsData) : null}
             </div>
           </div>
         </div>
@@ -366,19 +301,35 @@ export const Message: React.FC<MessageProps> = ({}) => {
           <div className="receiverIn4__container">
             {currentFriend == null ? null : (
               <FriendInformation
-                friendAvatar={currentFriend.friendAvatar}
-                friendId={currentFriend.friendId}
-                friendName={currentFriend.friendName}
+                key={currentFriend.userId}
+                friendAvatar={`${currentFriend.avatar}`}
+                friendId={currentFriend.userId}
+                friendName={currentFriend.username}
                 onClickHandler={nullOnclickHandler}
               />
             )}
           </div>
           {/* Place to render message log */}
           <div className="messageContent__section">
-            {renderChatLog(MessagesData)}
+            {currentFriend !== null ? (
+              currentChatLog !== null ? (
+                renderChatLog(currentChatLog)
+              ) : null
+            ) : (
+              <EmptyChatBox></EmptyChatBox>
+            )}
           </div>
-          <div className="newMessage__section">
-            <div className="newMessage__container">
+          <div
+            className={`newMessage__section ${
+              currentFriend === null
+                ? "newMessage__section--disabled"
+                : "newMessage__section--enabled"
+            }`}
+          >
+            <div
+              className="newMessage__container"
+              onKeyDown={(e) => onEnterPress(e)}
+            >
               <textarea
                 placeholder="Message..."
                 id="newMessage"
@@ -387,10 +338,14 @@ export const Message: React.FC<MessageProps> = ({}) => {
                 onChange={(e) => {
                   newMessageOnChangeHandler(e);
                 }}
+                ref={newMessageTextareaRef}
               ></textarea>
               <span
                 // onClick={newMessageSubmitHandler}
-                onClick={scrollToLastMessage}
+                onClick={() => {
+                  scrollToLastMessage();
+                  newMessageSubmitHandler();
+                }}
                 className={`newMessage__submit ${
                   newMessageIsEmpty
                     ? "newMessage__submit--disabled"

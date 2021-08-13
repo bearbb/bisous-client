@@ -158,27 +158,27 @@ export const Feeds: React.FC<FeedsProps> = ({ init }) => {
   const [postsData, setPostsData] =
     useState<PostDataWithAvatarAndInteractionStatus[] | null>(null);
   //Get all owner data
-  const getAllOwnerData = async () => {
-    let [ownerData, ownerFollowData, ownerFavorites] = await Promise.all([
-      getOwnerData(),
-      getOwnerFollowData(),
-      getFavoriteList(),
-    ]);
-    if (
-      ownerData !== null &&
-      ownerFollowData !== null &&
-      ownerFavorites !== null
-    ) {
-      let ownerPostData = await getUserPostData(ownerData.userData.userId);
-      // console.log(ownerPostData);
-      if (ownerPostData !== null) {
-        setPostCount(ownerPostData.postCount);
-        setOwnerData({ ...ownerData.userData, isReady: true });
-        setOwnerFollowData(ownerFollowData);
-        setFavoriteData({ favoriteList: ownerFavorites });
-      }
-    }
-  };
+  // const getAllOwnerData = async () => {
+  //   let [ownerData, ownerFollowData, ownerFavorites] = await Promise.all([
+  //     getOwnerData(),
+  //     getOwnerFollowData(),
+  //     getFavoriteList(),
+  //   ]);
+  //   if (
+  //     ownerData !== null &&
+  //     ownerFollowData !== null &&
+  //     ownerFavorites !== null
+  //   ) {
+  //     let ownerPostData = await getUserPostData(ownerData.userData.userId);
+  //     // console.log(ownerPostData);
+  //     if (ownerPostData !== null) {
+  //       setPostCount(ownerPostData.postCount);
+  //       setOwnerData({ ...ownerData.userData, isReady: true });
+  //       setOwnerFollowData(ownerFollowData);
+  //       setFavoriteData({ favoriteList: ownerFavorites });
+  //     }
+  //   }
+  // };
   const getUserPosts = async () => {
     let ownerPostData = await getUserPostData(ownerData.userId);
     if (ownerPostData !== null) {
