@@ -4,7 +4,6 @@ import { SearchNNewPost } from "pages/Header/SearchNNewPost";
 import { Utility } from "pages/Header/Utility";
 import { Chat } from "pages/Message/Chat";
 import "styles/Message.css";
-import avatar from "styles/images/avatar.webp";
 // import io from "socket.io-client";
 import axiosInstance from "Utility/axios";
 import { useHistory } from "react-router-dom";
@@ -14,7 +13,12 @@ import { EmptyChatBox } from "pages/Message/EmptyChatBox";
 import { useFollowContext } from "Contexts/FollowContext";
 import { useUserContext } from "Contexts/UserContext";
 import { useSocketContext } from "Contexts/SocketContext";
-import { join } from "path";
+
+import { faSpinner } from "@fortawesome/fontawesome-free-solid";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+
+const LoadingIcon = faSpinner as IconProp;
 
 export interface friendData {
   friendName: string;
@@ -38,7 +42,7 @@ const imgUrlPrefix = "https://application.swanoogie.me/api/images/";
 const fetchFriendData = async (
   followingList: string[]
 ): Promise<FriendData[]> => {
-  console.log(followingList);
+  // console.log(followingList);
   if (followingList[0] === "") {
     return [];
   } else {
@@ -63,48 +67,43 @@ export const Message: React.FC<MessageProps> = ({}) => {
   const socket = useSocketContext();
   const [currentUser, setCurrentUser] = useState<string>(userData.username);
   const [currentChatLog, setCurrentChatLog] =
-    useState<Array<MessageData> | null>([
-      {
-        sender: { userId: "60f39b3ffddbdd31da2ffe39", username: "bearbb2" },
-        receiver: { userId: "60dd3d65784646034844a4e5" },
-        message: "b1",
-        createdAt: "1628846936805",
-      },
-    ]);
+    useState<Array<MessageData> | null>([]);
   const newMessageTextareaRef = useRef<HTMLTextAreaElement>(null);
   const history = useHistory();
   const [friendsData, setFriendsData] = useState<FriendData[] | null>(null);
 
   const updateCurrentChatLog = (newChatData: MessageData) => {
-    console.log(
-      `%c currentChatLog`,
-      "background: #292d3e; color: #f07178; font-weight: bold"
-    );
-    console.log(currentChatLog);
+    // console.log(
+    //   `%c currentChatLog`,
+    //   "background: #292d3e; color: #f07178; font-weight: bold"
+    // );
+    // console.log(currentChatLog);
     if (currentChatLog === null) {
       setCurrentChatLog([newChatData]);
     } else {
       let temp = [...currentChatLog, newChatData];
-      console.log(
-        `%cCurrent chat log after changed`,
-        "background: #292d3e; color: #f07178; font-weight: bold"
-      );
-      console.log(temp);
+      // console.log(
+      //   `%cCurrent chat log after changed`,
+      //   "background: #292d3e; color: #f07178; font-weight: bold"
+      // );
+      // console.log(temp);
       setCurrentChatLog(temp);
+      setTimeout(() => {
+        scrollToLastMessage();
+      }, 200);
     }
     // console.log("after chat log: ", currentChatLog);
   };
   useEffect(() => {
     socket.on("incomingMessage", (data) => {
-      let temp = { ...data, createdAt: Date.now().toString() };
-      console.log(temp);
-      updateCurrentChatLog(temp);
+      updateCurrentChatLog(data);
     });
     return () => {
       socket.off("incomingMessage");
     };
   }, [socket, currentChatLog]);
   //emit on sending message
+  //TODO: filter out enter key on submit
   const emitMessage = (receiverId: string, msgContent: string) => {
     let temp: MessageData = {
       sender: {
@@ -141,6 +140,9 @@ export const Message: React.FC<MessageProps> = ({}) => {
     };
     createdAt: string;
   }
+  // interface MessageData extends PreMessageData {
+  //   _id: string
+  // }
   const [currentFriend, setCurrentFriend] = useState<FriendData | null>(null);
   const currentFriendHandler = (
     friendId: string,
@@ -158,11 +160,63 @@ export const Message: React.FC<MessageProps> = ({}) => {
       username: friendName,
       avatar: friendAvatar,
     });
+    if (isAlreadyLoadedAllChat) {
+      setIsAlreadyLoadedAllChat(false);
+    }
     //add currentFriend__container--active to that html element
     let doc = document.getElementsByClassName(friendId)[0];
     doc.classList.add("currentFriend__container--active");
-    history.push(`/direct/t/${friendId}`);
+    // history.push(`/direct/t/${friendId}`);
   };
+  //fetch for messages on load
+  const fetchMessages = async (
+    filterDate: string,
+    receiverId: string
+  ): Promise<MessageData[]> => {
+    try {
+      let res = await axiosInstance.get(
+        `/messages/t/${receiverId}/${filterDate}`
+      );
+      //messages arr from server is res.data.messages
+      let messagesData: MessageData[] = res.data.messages.map(
+        (data: {
+          sender: { _id: string; username: string };
+          receiver: { _id: string; username: string };
+          message: string;
+          createdAt: string;
+        }) => {
+          let temp: MessageData = {
+            sender: { userId: data.sender._id, username: data.sender.username },
+            receiver: { userId: data.receiver._id },
+            message: data.message,
+            createdAt: data.createdAt,
+          };
+          return temp;
+        }
+      );
+      return messagesData;
+    } catch (err) {
+      let r: MessageData[] = [];
+      // console.error(err);
+      return r;
+    }
+  };
+  //fetch on change current friend
+  useEffect(() => {
+    (async () => {
+      //TODO: check if current friend have changed or not
+      if (currentFriend !== null) {
+        let currentTime = new Date();
+        let messagesData = await fetchMessages(
+          currentTime.toISOString(),
+          currentFriend.userId
+        );
+        messagesData = messagesData.reverse();
+        setCurrentChatLog(messagesData);
+        scrollToLastMessage();
+      }
+    })();
+  }, [currentFriend]);
   const nullOnclickHandler = () => {};
   const [newMessage, setNewMessage] = useState<string>("");
   const [newMessageIsEmpty, setNewMessageIsEmpty] = useState<boolean>(true);
@@ -174,7 +228,6 @@ export const Message: React.FC<MessageProps> = ({}) => {
           friendAvatar={`${imgUrlPrefix}${friendData.avatar}`}
           friendId={friendData.userId}
           friendName={friendData.username}
-          //TODO: add onClick attribute
           onClickHandler={currentFriendHandler}
           customClass="friendList--realShit"
         />
@@ -190,20 +243,76 @@ export const Message: React.FC<MessageProps> = ({}) => {
   const newMessageSubmitHandler = () => {
     if (currentFriend !== null) {
       emitMessage(currentFriend.userId, newMessage);
-      scrollToLastMessage();
     }
     //clear the new message input
     if (newMessageTextareaRef.current !== null) {
       newMessageTextareaRef.current.value = "";
       setNewMessage("");
     }
+    // scrollToLastMessage();
   };
   const onEnterPress = async (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter") {
       newMessageSubmitHandler();
     }
   };
-  const lastMessageRef = useRef<HTMLLIElement | null>(null);
+  const [prePosition, setPrePosition] = useState<number | null>(null);
+  const messageContentUlRef = useRef<HTMLUListElement | null>(null);
+  const messageContentSectionRef = useRef<HTMLDivElement | null>(null);
+  const [isLoadMoreChat, setIsLoadMoreChat] = useState<boolean>(false);
+  const [isAlreadyLoadedAllChat, setIsAlreadyLoadedAllChat] =
+    useState<boolean>(false);
+
+  const loadMoreChat = async () => {
+    //get chat before the date of the first element of current chat log
+    if (currentChatLog !== null) {
+      // console.log(firstMessageRef.current?.getBoundingClientRect());
+      // console.log(messageContentUlRef.current?.firstElementChild);
+      // setPrePosition()
+      setIsLoadMoreChat(true);
+      let filterDate = currentChatLog[0].createdAt;
+      let receiverId = currentChatLog[0].receiver.userId;
+      //Fetch message data
+      let moreChatLogs = await fetchMessages(filterDate, receiverId);
+      setIsLoadMoreChat(false);
+      if (moreChatLogs.length === 0) {
+        setIsAlreadyLoadedAllChat(true);
+      } else {
+        moreChatLogs = moreChatLogs.reverse();
+        //update current chat log
+        setCurrentChatLog([...moreChatLogs, ...currentChatLog]);
+      }
+    }
+  };
+  // useEffect(() => {
+  //   if (prePosition !== null) {
+  //     setTimeout(() => {
+  //       scrollToPrePosition(-prePosition);
+  //     }, 500);
+  //   }
+  //   return () => {};
+  // }, [prePosition]);
+  const onScrollToLoadMoreChat = () => {
+    const firstMessage = messageContentUlRef.current?.firstElementChild;
+    let firstMessageYPosition = firstMessage?.getBoundingClientRect();
+    if (firstMessageYPosition !== undefined) {
+      let temp = Math.round(firstMessageYPosition.y);
+      if (temp == 154 && !isAlreadyLoadedAllChat) {
+        // console.log(
+        //   `%c Load more chat now`,
+        //   "background: #292d3e; color: #f07178; font-weight: bold"
+        // );
+        //get the pre y position of container
+        // console.log(messageContentSectionRef.current?.getBoundingClientRect());
+        //assign the height of pre element
+        setPrePosition(
+          messageContentSectionRef!.current!.getBoundingClientRect().height
+        );
+        loadMoreChat();
+      }
+    }
+  };
+
   const renderChatLog = (data: MessageData[]): React.ReactElement => {
     let ChatLogs: React.DetailedHTMLProps<
       React.LiHTMLAttributes<HTMLLIElement>,
@@ -214,7 +323,7 @@ export const Message: React.FC<MessageProps> = ({}) => {
       if (i !== dataLength - 1) {
         if (data[i].sender.userId === userData.userId) {
           ChatLogs.push(
-            <li className="outgoing">
+            <li className="outgoing" key={i}>
               <Chat
                 message={data[i].message}
                 isIncoming={false}
@@ -224,7 +333,7 @@ export const Message: React.FC<MessageProps> = ({}) => {
           );
         } else {
           ChatLogs.push(
-            <li className="incoming">
+            <li className="incoming" key={i}>
               <Chat
                 message={data[i].message}
                 isIncoming={true}
@@ -236,7 +345,7 @@ export const Message: React.FC<MessageProps> = ({}) => {
       } else {
         if (data[i].sender.userId === userData.userId) {
           ChatLogs.push(
-            <li className="outgoing" ref={lastMessageRef}>
+            <li className="outgoing" key={i}>
               <Chat
                 message={data[i].message}
                 isIncoming={false}
@@ -246,7 +355,7 @@ export const Message: React.FC<MessageProps> = ({}) => {
           );
         } else {
           ChatLogs.push(
-            <li className="incoming" ref={lastMessageRef}>
+            <li className="incoming" key={i}>
               <Chat
                 message={data[i].message}
                 isIncoming={true}
@@ -257,10 +366,37 @@ export const Message: React.FC<MessageProps> = ({}) => {
         }
       }
     }
-    return <ul className="messageContent__ul">{ChatLogs}</ul>;
+    return (
+      <ul className="messageContent__ul" ref={messageContentUlRef}>
+        {isLoadMoreChat && (
+          <span className="loadingMoreChat__icon">
+            <FontAwesomeIcon icon={LoadingIcon} spin={true}></FontAwesomeIcon>
+          </span>
+        )}
+        {ChatLogs}
+      </ul>
+    );
   };
   const scrollToLastMessage = () => {
-    lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+    //scroll into end of ul that contain messages
+    messageContentUlRef.current?.scrollIntoView({
+      block: "end",
+    });
+  };
+  const scrollToPrePosition = (prePosition: number) => {
+    messageContentUlRef.current?.scrollIntoView({
+      block: "end",
+      behavior: "smooth",
+    });
+    // console.log(
+    //   `%cPP: ${prePosition}`,
+    //   "background: #292d3e; color: #f07178; font-weight: bold"
+    // );
+    setTimeout(() => {
+      messageContentSectionRef.current?.scrollTo({
+        top: prePosition,
+      });
+    }, 500);
   };
   useEffect(() => {
     if (newMessage == "") {
@@ -270,10 +406,9 @@ export const Message: React.FC<MessageProps> = ({}) => {
     }
   }, [newMessage]);
   //Scroll to the very end message when render out msg
-  useEffect(() => {
-    scrollToLastMessage();
-  }, []);
 
+  const topSignalRef = useRef<HTMLDivElement>(null);
+  //listener to messageContentUl scroll to top
   return (
     <div className="Message">
       <div className="feedsHeader__container">
@@ -298,7 +433,7 @@ export const Message: React.FC<MessageProps> = ({}) => {
           </div>
         </div>
         <div className="message__container">
-          <div className="receiverIn4__container">
+          <div className="receiverIn4__container" ref={topSignalRef}>
             {currentFriend == null ? null : (
               <FriendInformation
                 key={currentFriend.userId}
@@ -310,7 +445,13 @@ export const Message: React.FC<MessageProps> = ({}) => {
             )}
           </div>
           {/* Place to render message log */}
-          <div className="messageContent__section">
+          <div
+            ref={messageContentSectionRef}
+            className="messageContent__section"
+            onScroll={() => {
+              onScrollToLoadMoreChat();
+            }}
+          >
             {currentFriend !== null ? (
               currentChatLog !== null ? (
                 renderChatLog(currentChatLog)
@@ -343,7 +484,7 @@ export const Message: React.FC<MessageProps> = ({}) => {
               <span
                 // onClick={newMessageSubmitHandler}
                 onClick={() => {
-                  scrollToLastMessage();
+                  // scrollToLastMessage();
                   newMessageSubmitHandler();
                 }}
                 className={`newMessage__submit ${

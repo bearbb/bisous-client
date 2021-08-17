@@ -179,6 +179,19 @@ body,
   overflow-y: auto;
 }
 
+.loadingMoreChat__icon {
+  color: #ff5132;
+  font-size: 2.7rem;
+}
+.loadMoreChat__button {
+  padding: 10px;
+  background-color: #ff5132;
+  color: white;
+  font-weight: bold;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
 .messageContent__ul {
   padding: 0;
   margin: 0;
@@ -195,7 +208,8 @@ body,
   background-color: #ffffff;
 }
 .outgoingChat__container {
-  background-color: #efefef;
+  background-color: #ff6347;
+  color: white !important;
 }
 .outgoing {
   justify-content: flex-end;
@@ -209,9 +223,10 @@ body,
   flex-shrink: 0;
   border-radius: 22px;
   text-align: left;
-  word-break: break-all;
+  word-break: break-word;
   color: rgba(var(--i1d, 38, 38, 38), 1);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  font-weight: 500;
 }
 
 .currentFriend__container--active {

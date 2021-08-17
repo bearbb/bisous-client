@@ -83,10 +83,10 @@ function App() {
 
   //joined handle
   const socketRoomJoinedSuccess = () => {
-    console.log(
-      `%cSocket connect n join room successfully`,
-      "background: #292d3e; color: #f07178; font-weight: bold"
-    );
+    // console.log(
+    //   `%cSocket connect n join room successfully`,
+    //   "background: #292d3e; color: #f07178; font-weight: bold"
+    // );
     setSocketRoomJoined(true);
   };
 
@@ -94,17 +94,17 @@ function App() {
   useEffect(() => {
     //check if joined
     if (!socketRoomJoined && userData.userId) {
-      console.log(
-        `%cConnecting to socket`,
-        "background: #292d3e; color: #f07178; font-weight: bold"
-      );
+      // console.log(
+      //   `%cConnecting to socket`,
+      //   "background: #292d3e; color: #f07178; font-weight: bold"
+      // );
       socket.connect();
     }
     socket.on("connect", () => {
-      console.log(
-        `%c${userData.userId}`,
-        "background: #292d3e; color: #f07178; font-weight: bold"
-      );
+      // console.log(
+      //   `%c${userData.userId}`,
+      //   "background: #292d3e; color: #f07178; font-weight: bold"
+      // );
       socket.emit("authenticateFromClient", { uid: userData.userId });
     });
     //listen on joined
